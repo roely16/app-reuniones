@@ -6,12 +6,12 @@
                 <v-col cols="12" md="9">
                     <v-card class="pl-5 pt-5 pr-5 pb-5" shaped elevation="4">
                         <v-card-title class="justify-center headline">Inicio de Sesión</v-card-title>
-                        <v-card-subtitle class="text-center subheading">
+                        <v-card-subtitle class="text-center subheading mb-10">
                             Control de Reuniones
                         </v-card-subtitle>
                         
                         <v-card-text class="mt-4">
-                            <v-row align="center" justify="center">
+                            <v-row justify="center">
                                 <v-col cols="12" md="7">
                                     <v-img
                                         max-width="300"

@@ -4,6 +4,13 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Registro from '../views/Registro.vue'
 
+import Home from '../views/Home'
+
+// eslint-disable-next-line no-unused-vars
+import Reuniones from '../views/Reuniones'
+import Calendario from '../views/Calendario'
+import Participantes from '../views/Participantes'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -16,6 +23,28 @@ const routes = [
 		path: '/registro',
 		name: 'registro',
 		component: Registro
+	},
+	{
+		path: '/home',
+		name: 'home',
+		component: Home,
+		children: [
+			{
+				path: '/home/reuniones',
+				name: 'reuniones',
+				component: Reuniones
+			},
+			{
+				path: '/home/calendario',
+				name: 'calendario',
+				component: Calendario
+			},
+			{
+				path: '/home/participantes',
+				name: 'participantes',
+				component: Participantes
+			}
+		]
 	}
 ]
 
