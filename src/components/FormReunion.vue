@@ -12,7 +12,7 @@
                         :options="editorOption"
                         
                     />
-
+    
                 </v-col>
                 <v-col>
                     <v-row>
@@ -24,21 +24,18 @@
                                             Vista Previa
                                         </v-col>
                                         <v-col align="end">
-                                            <v-btn text>
-                                                <v-icon>
-                                                    mdi-download
-                                                </v-icon>
-                                            </v-btn>
-                                            <v-btn text>
+                                            
+                                            <v-btn :loading="loading_preview" :disabled="loading_preview" @click="recargar_vistaprevia()" text>
                                                 <v-icon>
                                                     mdi-refresh
                                                 </v-icon>
                                             </v-btn>
+                                            
                                         </v-col>
                                     </v-row>
                                 </v-card-title>
                                 <v-card-text>
-                                    <iframe src="http://www.pdf995.com/samples/pdf.pdf" width="100%" height="300px">
+                                    <iframe v-if="!loading_preview" :src="pdf_vistaprevia" width="100%" height="300px">
                                     </iframe>
                                 </v-card-text>
                             </v-card>
@@ -62,15 +59,15 @@
 
                                 <v-card-text>
                                     <v-autocomplete
-                                        v-model="friends"
+                                        v-model="personas_enviar"
                                         :disabled="isUpdating"
-                                        :items="people"
+                                        :items="personas"
                                         filled
                                         chips
                                         color="blue-grey lighten-2"
-                                        label="Select"
-                                        item-text="name"
-                                        item-value="name"
+                                        label="Personas"
+                                        item-text="nombre"
+                                        item-value="id"
                                         multiple
                                     >
                                         <template v-slot:selection="data">
@@ -82,20 +79,20 @@
                                             @click:close="remove(data.item)"
                                             >
                                             <v-avatar left>
-                                                <v-img :src="data.item.avatar"></v-img>
+                                                <v-img :src="data.item.avatar ? data.item.avatar : 'avatar/user.png'"></v-img>
                                             </v-avatar>
-                                            {{ data.item.name }}
+                                            {{ data.item.nombre }}
                                             </v-chip>
                                         </template>
                                         <template v-slot:item="data">
                                             
                                             <template>
                                                 <v-list-item-avatar>
-                                                    <img :src="data.item.avatar">
+                                                    <img :src="data.item.avatar ? data.item.avatar : 'avatar/user.png'">
                                                 </v-list-item-avatar>
                                                 <v-list-item-content>
-                                                    <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                                                    <v-list-item-subtitle v-html="data.item.group"></v-list-item-subtitle>
+                                                    <v-list-item-title v-html="data.item.nombre"></v-list-item-title>
+                                                    <v-list-item-subtitle v-html="data.item.cargo"></v-list-item-subtitle>
                                                 </v-list-item-content>
                                             </template>
                                         </template>
@@ -120,44 +117,158 @@
 </style>
 
 <script>
+
+    /* eslint-disable no-unused-vars */
+
+
+    import request from '@/functions/request.js'
+    import { Editor, EditorContent, EditorMenuBar  } from 'tiptap';
+
+    import {
+        Blockquote,
+        CodeBlock,
+        HardBreak,
+        Heading,
+        OrderedList,
+        BulletList,
+        ListItem,
+        TodoItem,
+        TodoList,
+        Bold,
+        Code,
+        Italic,
+        Link,
+        Strike,
+        Underline,
+        History,
+    } from 'tiptap-extensions'
+
     export default {
-        
+        components: {
+            EditorContent,
+            EditorMenuBar
+        },
         data () {
-
-            // eslint-disable-next-line no-unused-vars
-            const srcs = {
-                1: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-                2: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-                3: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-                4: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
-                5: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
-            }
-
             return {
+                api: process.env.VUE_APP_API_URL,
+                personas: [],
+                personas_enviar: [],
                 content: null,
                 editorOption: {
-                // Some Quill options...
+               
                 },
                 autoUpdate: true,
                 friends: ['Sandra Adams', 'Britta Holt'],
                 isUpdating: false,
                 name: 'Midnight Crew',
-                people: [
-                    { header: 'Group 1' },
-                    { name: 'Sandra Adams', group: 'Group 1', avatar: srcs[1] },
-                    { name: 'Ali Connors', group: 'Group 1', avatar: srcs[2] },
-                    { name: 'Trevor Hansen', group: 'Group 1', avatar: srcs[3] },
-                    { name: 'Tucker Smith', group: 'Group 1', avatar: srcs[2] },
-                    { divider: true },
-                    { header: 'Group 2' },
-                    { name: 'Britta Holt', group: 'Group 2', avatar: srcs[4] },
-                    { name: 'Jane Smith ', group: 'Group 2', avatar: srcs[5] },
-                    { name: 'John Smith', group: 'Group 2', avatar: srcs[1] },
-                    { name: 'Sandra Williams', group: 'Group 2', avatar: srcs[3] },
-                ],
                 title: 'The summer breeze',
+                pdf_vistaprevia: null,
+                loading_preview: false,
+                editor: new Editor({
+                    extensions: [
+                    new Blockquote(),
+                    new CodeBlock(),
+                    new HardBreak(),
+                    new Heading({ levels: [1, 2, 3] }),
+                    new BulletList(),
+                    new OrderedList(),
+                    new ListItem(),
+                    new TodoItem(),
+                    new TodoList(),
+                    new Bold(),
+                    new Code(),
+                    new Italic(),
+                    new Link(),
+                    new Strike(),
+                    new Underline(),
+                    new History(),
+                    ],
+                    content: `
+                    <h1>Yay Headlines!</h1>
+                    <p>All these <strong>cool tags</strong> are working now.</p>
+                    `,
+                }),
             }
         },
+        methods: {
+
+            personas_compartir(){
+
+                const data = {
+
+                    url: 'personas_compartir',
+                    data: null
+
+                }
+
+                request.post(data)
+                .then( (response) => {
+
+                    this.personas = response.data
+
+                    // Asignarles la dirección del api
+                    this.personas.forEach(persona => {
+                        
+                        if (persona.avatar) {
+                            
+                            persona.avatar = this.api + persona.avatar
+
+                        }
+
+                    });
+
+                    console.log(this.personas);
+
+                })
+
+            },
+            recargar_vistaprevia(){
+
+                this.loading_preview = true
+
+                const data = {
+
+                    url: 'generar_vistaprevia',
+                    data: {
+                        content: this.editor.getHTML()
+                    }
+
+                }
+
+                request.post(data)
+                .then((response) => {
+
+                    
+                    this.pdf_vistaprevia = this.api + response.data.pdf_url
+                    this.loading_preview = false
+                    
+                   
+                })
+
+            },
+            autosave(){
+
+
+            },
+            remove (item) {
+                
+                const index = this.personas_enviar.indexOf( item.id )
+
+                if (index >= 0) this.personas_enviar.splice(index, 1)
+
+            },
+            compartir(){
+
+
+
+            }
+
+        },
+        mounted(){
+
+            this.personas_compartir()
+
+        }
         
     }
 </script>

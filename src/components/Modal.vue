@@ -4,9 +4,8 @@
         <v-row justify="center">
             <v-dialog
                 v-model="dialog"
-                fullscreen
-                hide-overlay
-                transition="dialog-bottom-transition"
+                :fullscreen="fullscreen"
+                :width="width"
             >
             
             <v-card>
@@ -24,13 +23,7 @@
                     <v-toolbar-title>{{ title }}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-toolbar-items>
-                        <!-- <v-btn
-                        dark
-                        text
-                        @click="dialog = false"
-                        >
-                            GUARDAR
-                        </v-btn> -->
+                        
                         <slot name="modal-corner-right">
 
                         </slot>
@@ -53,7 +46,9 @@
 
         props: {
 
-            title: String
+            title: String,
+            fullscreen: Boolean,
+            width: String
 
         },
         data () {
@@ -69,6 +64,11 @@
             show(){
 
                 this.dialog = true
+
+            },
+            close(){
+
+                this.dialog = false
 
             }
 

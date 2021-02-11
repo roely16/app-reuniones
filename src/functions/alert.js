@@ -17,11 +17,26 @@ var fun = {
 
 
     },
-    async confirm_alert(){
+    async alert_confirm(data){
 
+        const result = await Swal.fire({
+            title: data.title,
+            text: data.message,
+            icon: data.type,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: data.confirm_text,
+            cancelButtonText: data.cancel_text
+        })
         
+        if (result) {
 
-    }
+            return result
+        }
+
+
+    },
 
 }
 

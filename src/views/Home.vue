@@ -17,7 +17,7 @@
 					<v-list>
 						<v-list-item two-line>
 							<v-list-item-avatar height="75" width="75">
-								<img contain src="https://randomuser.me/api/portraits/women/81.jpg">
+								<img contain :src="persona.avatar ? persona.avatar : 'avatar/user.png'">
 							</v-list-item-avatar>
 							<v-list-item-content>
 								
@@ -88,6 +88,7 @@
 			return{
 				drawer: false,
 				persona: {},
+				api: process.env.VUE_APP_API_URL,
 				menu: []
 			}
 		},
@@ -111,6 +112,14 @@
 				.then(( response ) => {
 
 					this.persona = response.data.persona
+
+					if (this.persona.avatar) {
+						
+						this.persona.avatar = this.api + this.persona.avatar
+						
+					}
+
+					
 					this.menu = response.data.menu
 
 				})

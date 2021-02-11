@@ -29,7 +29,7 @@
                 </v-card-text>
             </v-card>
 
-            <Modal ref="modal" :title="title">
+            <Modal :fullscreen="fullscreen" ref="modal" :title="title">
                 <template #form>
                     
                     <FormReunion></FormReunion>
@@ -37,16 +37,6 @@
                 </template>
 
                 <template #modal-corner-right>
-                    <v-btn
-                        dark
-                        text
-                        @click="dialog = false"
-                    >
-                        <v-icon>
-                            mdi-cloud-upload
-                        </v-icon>
-                    </v-btn>
-
                     <v-btn
                         dark
                         text
@@ -80,7 +70,8 @@
         data(){
             return{
 
-                title: null
+                title: null,
+                fullscreen: true
 
             }
         },
