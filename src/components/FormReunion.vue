@@ -2,7 +2,7 @@
     <div>
         <v-container fluid>
             
-            <v-row class="mt-4">
+            <v-row class="mt-2">
                 <v-col cols="7">
 
                     <quill-editor
@@ -48,7 +48,7 @@
                                             Compartir
                                         </v-col>
                                         <v-col align="end">
-                                            <v-btn text>
+                                            <v-btn :disabled="!idItem" @click="compartir()" text>
                                                 <v-icon>
                                                     mdi-export-variant
                                                 </v-icon>
@@ -127,10 +127,14 @@
 
     /* eslint-disable no-unused-vars */
     import request from '@/functions/request.js'
+    import alert from '@/functions/alert.js'
 
     export default {
         components: {
            
+        },
+        props: {
+            idItem: Number
         },
         data () {
 
@@ -201,8 +205,6 @@
 
                     });
 
-                    console.log(this.personas);
-
                 })
 
             },
@@ -243,7 +245,38 @@
             },
             compartir(){
 
+                const data = {
+                    title: "¿Está seguro?",
+                    message: "Se enviará el contenido de la bitácora a cada uno de los participantes seleccionados!",
+                    type: "warning",
+                    confirm_text: "Si, COMPARTIR!",
+                    cancel_text: "Cancelar"
+                }
 
+                alert.alert_confirm(data)
+                .then((result) => {
+
+                    if (result.isConfirmed) {
+
+                        const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
+                        const data = {
+                            url: 'compartir_bitacora',
+                            data: {
+                                id: this.idItem,
+                                compartir: this.personas_enviar,
+                                enviado_por: usuario.id_persona
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+                            console.log(response.data)
+                        })
+
+                    }
+
+                })
 
             },
             registrar(){
@@ -254,23 +287,93 @@
                     content: this.content,
                     observaciones: this.observaciones,
                     compartir: this.personas_enviar,
-                    registrado_por: usuario.id_persona
+                    registrado_por: usuario.id_persona,
+                    id: this.idItem
                 }
 
                 const data = {
-                    url: 'registrar_reunion',
+                    url: !this.idItem ? 'registrar_reunion' : 'editar_reunion',
                     data: reunion
                 }
 
                 request.post(data)
                 .then((response) => {
+                    
                     console.log(response.data)
+
+                    alert.show_alert(response.data)
+                    .then((result) => {
+                        
+                        if (response.data.status == 200) {
+                            
+                            this.$emit('updateTable')
+                            this.$emit('saved', response.data.data)
+                            
+                        }
+                    })
                 })
+
+            },
+            obtener_detalle(){
+
+                const data = {
+                    url: 'detalle_reunion',
+                    data: {
+                        id: this.idItem
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+                    console.log(response.data)
+
+                    this.content = response.data.contenido
+                    this.observaciones = response.data.observaciones
+                    this.personas_enviar = response.data.compartir
+
+                    this.recargar_vistaprevia()
+
+                })
+
+            },
+            clear(){
+
+                this.personas_enviar = []
+                this.content = null
+                this.observaciones = null
+                this.pdf_vistaprevia = null
+
+            }
+
+        },
+        watch: {
+
+            idItem: function(val){
+
+                if (val) {
+                    
+                    this.obtener_detalle()
+
+                }else{
+
+                    this.clear()
+
+                }
 
             }
 
         },
         mounted(){
+
+            if (this.idItem) {
+                
+                this.obtener_detalle()
+
+            }else{
+
+                this.clear()
+
+            }
 
             this.personas_compartir()
 

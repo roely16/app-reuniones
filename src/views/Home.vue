@@ -38,7 +38,7 @@
 						<v-list-item-title>Salir</v-list-item-title>
 					</v-list-item> -->
 					<div class="pa-2">
-						<v-btn color="red" dark block>
+						<v-btn @click="salir()" color="red" dark block>
 							Salir 
 							<v-icon>
 								mdi-logout
@@ -123,6 +123,11 @@
 					this.menu = response.data.menu
 
 				})
+
+			},
+			salir(){
+
+				this.$router.push({ name: 'login' })
 
 			}
 
