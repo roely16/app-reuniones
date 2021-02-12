@@ -2,17 +2,31 @@
     <div>
         <v-container>
 
-            <v-form @submit.prevent="!idItem ? registrar() : editar()">
+            <v-form ref="form" v-model="valid" @submit.prevent="!idItem ? registrar() : editar()">
 
+                <v-row justify="center" align="center" dense>
+                    <v-col cols="6">
+                        <v-card>
+                            <v-card-text class="text-center" align="center" justify="center">
+                                <v-img width="130" contain :src="url_image ? url_image : 'avatar/user.png'"></v-img>
+                            </v-card-text>
+                            <v-card-text>
+                                 <v-file-input accept="image/*" @change="select_image" hide-details autocomplete="off" v-model="avatar" :prepend-icon="null" prepend-inner-icon="mdi-camera" filled label="Avatar"></v-file-input>
+                            </v-card-text>
+                        </v-card>
+                    </v-col>
+                    
+                </v-row>
                 <v-row >
+                    
                     <v-col cols="6">
-                        <v-text-field v-model="participante.nombres" autocomplete="off" outlined hide-details label="Nombre"></v-text-field>
+                        <v-text-field :rules="[ v => !!v ]" v-model="participante.nombres" autocomplete="off" outlined hide-details label="Nombre"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="participante.apellidos" autocomplete="off" outlined hide-details label="Apellido"></v-text-field>
+                        <v-text-field :rules="[ v => !!v ]" v-model="participante.apellidos" autocomplete="off" outlined hide-details label="Apellido"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="participante.telefono" autocomplete="off" outlined hide-details label="Teléfono"></v-text-field>
+                        <v-text-field :rules="[ v => !!v ]" v-model="participante.telefono" autocomplete="off" outlined hide-details label="Teléfono"></v-text-field>
                     </v-col>
                     <v-col cols="6">
                         <v-text-field v-model="participante.cargo" autocomplete="off" outlined hide-details label="Cargo"></v-text-field>
@@ -31,14 +45,23 @@
                     
                     <v-col cols="6">
 
-                        <v-checkbox v-if="!participante.usuario" v-model="participante.habilitar_usuario" label="Habilitar Usuario"></v-checkbox>
+                        <v-checkbox hide-details v-if="!participante.usuario" v-model="participante.habilitar_usuario" label="Habilitar Usuario"></v-checkbox>
 
                         <v-alert class="mt-4" dense v-if="participante.usuario" type="success">USUARIO HABILITADO</v-alert>
                     </v-col>
 
-                    <v-col cols="6">
-                        <v-text-field class="mt-4" v-if="participante.habilitar_usuario" :type="!participante.show_password ? 'password' : 'text'" :append-icon="!participante.show_password ? 'mdi-eye' : 'mdi-eye-off'" autocomplete="off" outlined hide-details label="Contraseña" @click:append="participante.show_password = !participante.show_password"></v-text-field>
+                    
+                </v-row>
+
+                <v-row dense>
+                    <v-col cols="6"  v-if="participante.habilitar_usuario">
+                        <v-text-field v-model="participante.password" :rules="[ v => !!v ]" :type="!participante.show_password ? 'password' : 'text'" :append-icon="!participante.show_password ? 'mdi-eye' : 'mdi-eye-off'" autocomplete="off" outlined hide-details label="Contraseña" @click:append="participante.show_password = !participante.show_password"></v-text-field>
                     </v-col>
+
+                     <v-col cols="6" v-if="participante.usuario || participante.habilitar_usuario">
+                        <v-select v-model="participante.id_rol" :rules="[ v => !!v ]" :items="roles" item-text="nombre" item-value="id" autocomplete="off" outlined hide-details label="Rol"></v-select>
+                    </v-col>
+
                 </v-row>
 
                 <v-row class="mt-4">
@@ -79,35 +102,46 @@
                     avatar: null,
                     habilitar_usuario: null,
                     password: null,
-                    show_password: false
-                }
+                    show_password: false,
+                    id_rol: null
+                },
+                roles: [],
+                valid: true,
+                avatar: null,
+                url_image: null
             }
         },
         methods: {
 
             registrar(){
 
-                const data = {
-                    url: 'registrar_participante',
-                    data: this.participante
-                }
+                this.$refs.form.validate()
 
-                request.post(data)
-                .then((response) => {
+                if (this.valid) {
+                    
+                    const data = {
+                        url: 'registrar_participante',
+                        data: this.participante
+                    }
 
-                    alert.show_alert(response.data)
-                    .then(() => {
+                    request.post(data)
+                    .then((response) => {
 
-                        if (response.data.status == 200) {
-                            
-                            this.$emit('updateTable')
-                            this.$emit('closeModal')
+                        alert.show_alert(response.data)
+                        .then(() => {
 
-                        }
+                            if (response.data.status == 200) {
+                                
+                                this.$emit('updateTable')
+                                this.$emit('closeModal')
+
+                            }
+
+                        })
 
                     })
 
-                })
+                }
 
             },
             detalle(){
@@ -154,6 +188,55 @@
                     })
                 })
 
+            },
+            obtener_datos(){
+
+                const data = {
+                    url: 'obtener_roles',
+                    data: null
+                }
+
+                request.post(data)
+                .then((response) => {
+                    this.roles = response.data
+                })
+
+            },
+            clear(){
+
+                    
+                this.participante = {
+
+                    nombres: null,
+                    apellidos: null,
+                    telefono: null,
+                    cargo: null,
+                    email: null,
+                    avatar: null,
+                    habilitar_usuario: null,
+                    password: null,
+                    show_password: false,
+                    id_rol: null
+
+                }
+
+                this.$refs.form.resetValidation()
+
+                
+
+            },
+            select_image(){
+
+                if (this.avatar) {
+                    
+                    this.url_image = URL.createObjectURL(this.avatar)
+
+                }else{
+
+                    this.url_image = null
+
+                }
+
             }
 
         },
@@ -164,6 +247,10 @@
                 if (val) {
 
                     this.detalle()
+
+                }else{
+
+                    this.clear()
 
                 }
 
@@ -176,9 +263,15 @@
                 
                 this.detalle()
 
+            }else{
+
+                this.clear()
+
             }
 
-        }
+            this.obtener_datos()
+
+        },
         
     }
 </script>

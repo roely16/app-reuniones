@@ -35,6 +35,14 @@
                                     </v-btn>
                                 </template> 
 
+                                <template v-slot:[`item.avatar`]="data">
+                                    <v-avatar size="36">
+                                        <img
+                                            :src="data.item.avatar ? api + data.item.avatar : 'avatar/user.png'"
+                                        >
+                                    </v-avatar>
+                                </template>
+
                             </v-data-table>
                         </v-col>
                     </v-row>
@@ -42,10 +50,10 @@
                 </v-card-text>
             </v-card>
 
-             <Modal :fullscreen="fullscreen" :width="width" ref="modal" :title="title">
+             <Modal @clear_form="clear_form" :fullscreen="fullscreen" :width="width" ref="modal" :title="title">
                 <template #form>
                     
-                    <FormParticipantes :idItem="idItem" @updateTable="obtener_datos" @closeModal="close_modal"></FormParticipantes>
+                    <FormParticipantes ref="form" :idItem="idItem" @updateTable="obtener_datos" @closeModal="close_modal"></FormParticipantes>
 
                 </template>
 
@@ -70,6 +78,7 @@
         },
         data(){
             return{
+                api: process.env.VUE_APP_API_URL,
                 title: null,
                 fullscreen: false,
                 width: null,
@@ -161,6 +170,12 @@
                     }
 
                 })
+
+            },
+            clear_form(){
+
+                //this.$refs.form.clear()
+                this.idItem = null
 
             }
 

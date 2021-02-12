@@ -72,6 +72,19 @@
 
             }
 
+        },
+        watch: {
+
+            dialog: function(val){
+
+                if (!val) {
+                    
+                    this.$emit('clear_form')
+
+                }
+
+            }
+
         }
     }
 </script>

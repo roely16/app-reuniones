@@ -104,6 +104,13 @@
                     </v-row>
                 </v-col>
             </v-row>
+
+            <!-- Observaciones -->
+            <v-row>
+                <v-col cols="7">
+                    <v-textarea v-model="observaciones" rows="4" label="Observaciones" outlined hide-details></v-textarea>
+                </v-col>
+            </v-row>
         </v-container>
     </div>
 </template>
@@ -119,75 +126,52 @@
 <script>
 
     /* eslint-disable no-unused-vars */
-
-
     import request from '@/functions/request.js'
-    import { Editor, EditorContent, EditorMenuBar  } from 'tiptap';
-
-    import {
-        Blockquote,
-        CodeBlock,
-        HardBreak,
-        Heading,
-        OrderedList,
-        BulletList,
-        ListItem,
-        TodoItem,
-        TodoList,
-        Bold,
-        Code,
-        Italic,
-        Link,
-        Strike,
-        Underline,
-        History,
-    } from 'tiptap-extensions'
 
     export default {
         components: {
-            EditorContent,
-            EditorMenuBar
+           
         },
         data () {
+
+            const toolbarOptions = [
+                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['blockquote', 'code-block', 'image', 'video', 'link'],
+
+                [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+                [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                [{ 'direction': 'rtl' }],                         // text direction
+
+                [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+                [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+
+                ['clean']                                         // remove formatting button
+            ];
+
             return {
                 api: process.env.VUE_APP_API_URL,
                 personas: [],
                 personas_enviar: [],
                 content: null,
                 editorOption: {
-               
+                    modules: {
+                        imageResize: true,
+                        imageDrop: true,
+                        toolbar: toolbarOptions
+                    },
                 },
                 autoUpdate: true,
-                friends: ['Sandra Adams', 'Britta Holt'],
                 isUpdating: false,
-                name: 'Midnight Crew',
-                title: 'The summer breeze',
                 pdf_vistaprevia: null,
                 loading_preview: false,
-                editor: new Editor({
-                    extensions: [
-                    new Blockquote(),
-                    new CodeBlock(),
-                    new HardBreak(),
-                    new Heading({ levels: [1, 2, 3] }),
-                    new BulletList(),
-                    new OrderedList(),
-                    new ListItem(),
-                    new TodoItem(),
-                    new TodoList(),
-                    new Bold(),
-                    new Code(),
-                    new Italic(),
-                    new Link(),
-                    new Strike(),
-                    new Underline(),
-                    new History(),
-                    ],
-                    content: `
-                    <h1>Yay Headlines!</h1>
-                    <p>All these <strong>cool tags</strong> are working now.</p>
-                    `,
-                }),
+                observaciones: null
+               
             }
         },
         methods: {
@@ -230,7 +214,7 @@
 
                     url: 'generar_vistaprevia',
                     data: {
-                        content: this.editor.getHTML()
+                        content: this.content
                     }
 
                 }
@@ -260,6 +244,28 @@
             compartir(){
 
 
+
+            },
+            registrar(){
+
+                const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
+                const reunion = {
+                    content: this.content,
+                    observaciones: this.observaciones,
+                    compartir: this.personas_enviar,
+                    registrado_por: usuario.id_persona
+                }
+
+                const data = {
+                    url: 'registrar_reunion',
+                    data: reunion
+                }
+
+                request.post(data)
+                .then((response) => {
+                    console.log(response.data)
+                })
 
             }
 

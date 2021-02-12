@@ -20,7 +20,7 @@
 
                     <v-row>
                         <v-col>
-                            <v-data-table>
+                            <v-data-table :items="items" :headers="headers">
 
                             </v-data-table>
                         </v-col>
@@ -32,7 +32,7 @@
             <Modal :fullscreen="fullscreen" ref="modal" :title="title">
                 <template #form>
                     
-                    <FormReunion></FormReunion>
+                    <FormReunion ref="form"></FormReunion>
 
                 </template>
 
@@ -40,7 +40,7 @@
                     <v-btn
                         dark
                         text
-                        @click="dialog = false"
+                        @click="registrar()"
                     >
                         <v-icon>
                             mdi-content-save
@@ -71,22 +71,45 @@
             return{
 
                 title: null,
-                fullscreen: true
+                fullscreen: true,
+                items: [],
+                headers: []
 
             }
         },
         methods: {
 
+            obtener_reuniones(){
+                
+                const data = {
+                    url: 'obtener_reuniones',
+                    data: null
+                }
+
+                request.post(data)
+                .then((response) => {
+                    console.log(response.data)
+                    this.items = response.data.items
+                    this.headers = response.data.headers
+                })
+
+            },
             mostrar_modal(){
 
                 this.title = "Reunión"
                 this.$refs.modal.show()
+
+            },
+            registrar(){
+
+                this.$refs.form.registrar()
 
             }
             
         },
         mounted(){
 
+            this.obtener_reuniones()
 
         }
 
