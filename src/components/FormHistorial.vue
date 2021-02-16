@@ -5,28 +5,33 @@
 				<v-card>
 
 					<v-list>
-					<v-list-group
-						v-for="item in items"
-						:key="item.title"
-						v-model="item.active"
-						:prepend-icon="item.action"
-						no-action
-					>
-						<template v-slot:activator>
-						<v-list-item-content>
-							<v-list-item-title v-text="item.title"></v-list-item-title>
-						</v-list-item-content>
-						</template>
-
-						<v-list-item
-						v-for="child in item.items"
-						:key="child.title"
+						<v-list-group
+							v-for="historial in historial_envios"
+							:key="historial.id"
+							v-model="historial.active"
+							prepend-icon="mdi-email-send"
+							no-action
 						>
-						<v-list-item-content>
-							<v-list-item-title v-text="child.title"></v-list-item-title>
-						</v-list-item-content>
-						</v-list-item>
-					</v-list-group>
+							<template v-slot:activator>
+								<v-list-item-content>
+									<v-list-item-title v-text="historial.created_at"></v-list-item-title>
+									<v-list-item-subtitle>Enviado por: {{ historial.persona_envia }}</v-list-item-subtitle>
+								</v-list-item-content>
+								</template>
+
+								<v-list-item
+									v-for="envio in historial.detalle_envio"
+									:key="envio.id"
+								>
+								<v-list-item-content>
+									<v-list-item-title v-text="envio.persona_envio"></v-list-item-title>// TODO agregar avatar del usuario
+									<v-list-item-subtitle>{{ envio.cargo }}</v-list-item-subtitle>
+									<v-list-item-subtitle>
+										<small>{{ envio.email }}</small>
+									</v-list-item-subtitle>
+								</v-list-item-content>
+							</v-list-item>
+						</v-list-group>
 					</v-list>
 				</v-card>
 			</v-col>
@@ -44,48 +49,7 @@
         },
 		data(){
 			return{
-				items: [
-        {
-          action: 'mdi-ticket',
-          items: [{ title: 'List Item' }],
-          title: 'Attractions',
-        },
-        {
-          action: 'mdi-silverware-fork-knife',
-          active: true,
-          items: [
-            { title: 'Breakfast & brunch' },
-            { title: 'New American' },
-            { title: 'Sushi' },
-          ],
-          title: 'Dining',
-        },
-        {
-          action: 'mdi-school',
-          items: [{ title: 'List Item' }],
-          title: 'Education',
-        },
-        {
-          action: 'mdi-run',
-          items: [{ title: 'List Item' }],
-          title: 'Family',
-        },
-        {
-          action: 'mdi-bottle-tonic-plus',
-          items: [{ title: 'List Item' }],
-          title: 'Health',
-        },
-        {
-          action: 'mdi-content-cut',
-          items: [{ title: 'List Item' }],
-          title: 'Office',
-        },
-        {
-          action: 'mdi-tag',
-          items: [{ title: 'List Item' }],
-          title: 'Promotions',
-        },
-      ],
+				historial_envios: []
 			}
 		},
 		methods: {
@@ -102,14 +66,26 @@
 				request.post(data)
 				.then((response) => {
 					console.log(response.data)
+					this.historial_envios = response.data
 				})
 
 			}
 
 		},
-		mounted(){
+		watch: {
 
-			console.log(this.idItem);
+			idItem: function(val){
+
+                if (val) {
+                    
+                    this.obtener_datos()
+
+                }
+
+            }
+
+		},
+		mounted(){
 
 			this.obtener_datos()
 

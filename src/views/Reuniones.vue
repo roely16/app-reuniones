@@ -79,11 +79,11 @@
                 </template>
             </Modal>
 
-            <Modal :width="width" :fullscreen="fullscreen" ref="modal_historial" :title="title">
+            <Modal @clear_form="clear_form" :width="width" :fullscreen="fullscreen" ref="modal_historial" :title="title">
 
                 <template #form>
 
-                    <FormHistorial>
+                    <FormHistorial :idItem="idItem">
 
                     </FormHistorial>
 
@@ -223,8 +223,8 @@
 
                 this.title = "Historial"
                 this.fullscreen = false
-                this.width = '800'
-                this.idItem = null
+                this.width = '500'
+                this.idItem = item.id
                 this.$refs.modal_historial.show()
 
             }
