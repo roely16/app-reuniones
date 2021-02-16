@@ -5,7 +5,7 @@ module.exports = {
     'vuetify'
   ],
   devServer: {
-    disableHostCheck: true
+    host: 'localhost'
   },
   configureWebpack: {
     plugins: [

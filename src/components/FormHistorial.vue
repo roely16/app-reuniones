@@ -1,9 +1,15 @@
 <template>
 	<div>
-		<v-row>
+		<v-container>
+			<v-row>
 			<v-col>
 				<v-card>
 
+					<v-card-text v-if="historial_envios.length <= 0">
+						<h2 class="text-center">
+							Esta bitácora aún no se ha compartido.
+						</h2>
+					</v-card-text>
 					<v-list>
 						<v-list-group
 							v-for="historial in historial_envios"
@@ -23,8 +29,14 @@
 									v-for="envio in historial.detalle_envio"
 									:key="envio.id"
 								>
+								<v-list-item-avatar>
+									<v-img
+										:src="envio.avatar ? api + envio.avatar : 'avatar/user.png'"
+									></v-img>
+								</v-list-item-avatar>
+
 								<v-list-item-content>
-									<v-list-item-title v-text="envio.persona_envio"></v-list-item-title>// TODO agregar avatar del usuario
+									<v-list-item-title v-text="envio.persona_envio"></v-list-item-title>
 									<v-list-item-subtitle>{{ envio.cargo }}</v-list-item-subtitle>
 									<v-list-item-subtitle>
 										<small>{{ envio.email }}</small>
@@ -36,6 +48,7 @@
 				</v-card>
 			</v-col>
 		</v-row>
+		</v-container>
 	</div>
 </template>
 
@@ -49,7 +62,8 @@
         },
 		data(){
 			return{
-				historial_envios: []
+				historial_envios: [],
+				api: process.env.VUE_APP_API_URL,
 			}
 		},
 		methods: {

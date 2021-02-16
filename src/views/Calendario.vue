@@ -55,12 +55,24 @@
                   <v-toolbar
                     flat
                   >
-                    <v-btn
-                      outlined
-                      class="mr-4"
-                      color="grey darken-2"
+                    <!-- <v-btn
+						outlined
+						class="mr-4"
+						color="grey darken-2"
+						@click="hoy"
                     >
                       hoy
+                    </v-btn> -->
+					<v-btn
+						outlined
+						class="mr-4"
+						color="grey darken-2"
+						@click="type = 'month'"
+						:disabled="type == 'month'"
+                    >
+						<v-icon>
+							mdi-arrow-left
+						</v-icon>
                     </v-btn>
                     <v-btn
                       fab
@@ -99,28 +111,24 @@
                     :events="events"
                     :event-overlap-mode="mode"
                     :event-overlap-threshold="30"
-                    :event-color="getEventColor"
-                    @change="getEvents"
+                   
                     @click:event="editar_encargado"
                     @click:date="agregar_encargado"
+					@click:more="more"
                 ></v-calendar>
                 
                 </v-sheet>
             </v-card>
 
-            <Modal>
-              <FormCalendario :date="date" :selectedEvent="selectedEvent"></FormCalendario>
+            <Modal @clear_form="clear_form" ref="modal" :title="title" :fullscreen="fullscreen" :width="width">
+				<template #form>
+					<FormCalendario ref="form" @saved="obtener_calendario" :idItem="idItem" :idEvento="idEvento" :date="date" :selectedEvent="selectedEvent" @closeModal="close_modal"></FormCalendario>
+				</template>
             </Modal>
 
 			<!--  
 				TODO
-				- Mostrar modal
-				- Mostrar formulario
-				- Obtener los participantes
-				- Registrar el evento
-				- Editar el evento
 				- Eliminar el evento
-				- Mostrar eventos en el calendario 
 			-->
 
         </v-container>
@@ -129,8 +137,13 @@
 
 <script>
 
+	/* eslint-disable no-unused-vars */
+
+
 	import Modal from '@/components/Modal'
 	import FormCalendario from '@/components/FormCalendario'
+
+	import request from '@/functions/request.js'
 
     export default {
 		components: {
@@ -138,86 +151,100 @@
 			FormCalendario
 		},
 		data: () => ({
-		date: null,
-      selectedEvent: {},
-      selectedElement: null,
-      selectedOpen: false,
-      type: 'month',
-      types: ['month', 'week', 'day', '4day'],
-      mode: 'stack',
-      modes: ['stack', 'column'],
-      weekday: [0, 1, 2, 3, 4, 5, 6],
-      weekdays: [
-        { text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
-        { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
-        { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
-        { text: 'Mon, Wed, Fri', value: [1, 3, 5] },
-      ],
-      value: '',
-      events: [],
-      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-      names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
-    }),
+			date: null,
+			title: null,
+			fullscreen: false,
+			width: null,
+			idItem: null,
+			idEvento: null,
+			selectedEvent: {},
+			selectedElement: null,
+			selectedOpen: false,
+			type: 'month',
+			mode: 'stack',
+			modes: ['stack', 'column'],
+			weekday: [0, 1, 2, 3, 4, 5, 6],
+			weekdays: [
+				{ text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
+				{ text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
+				{ text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
+				{ text: 'Mon, Wed, Fri', value: [1, 3, 5] },
+			],
+			value: '',
+			events: [],
+			colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
+		}),
 		methods: {
 			agregar_encargado({ date }){
-				console.log(date);
-				console.log('agregar_encargado');
-				this.selectedOpen = true
+				
+				this.title = "Agregar Participante"
+				this.fullscreen = false
+				this.width = "700"
+				this.date = date
+				this.idItem = null
+				this.idEvento = null
+				this.$refs.modal.show()
+
 			},
-			editar_encargado({ nativeEvent, event }){
-				console.log(nativeEvent);
-				console.log(event);
+			editar_encargado({ event }){
 
-				const open = () => {
-					this.selectedEvent = event
-					this.selectedElement = nativeEvent.target
-					setTimeout(() => {
-					this.selectedOpen = true
-					}, 10)
-				}
+				this.title = "Editar Participante"
+				this.fullscreen = false
+				this.width = "700"
+				this.date = null
+				this.idItem = event.id_persona
+				this.idEvento = event.id
+				this.$refs.modal.show()
 
-				if (this.selectedOpen) {
-					this.selectedOpen = false
-					setTimeout(open, 10)
-				} else {
-					open()
-				}
-
-				nativeEvent.stopPropagation()
-				console.log('editar_encargado');
 			},
-			getEvents ({ start, end }) {
-				const events = []
+			more({date}){
 
-				const min = new Date(`${start.date}T00:00:00`)
-				const max = new Date(`${end.date}T23:59:59`)
-				const days = (max.getTime() - min.getTime()) / 86400000
-				const eventCount = this.rnd(days, days + 20)
+				this.type = 'day'
+				this.value = date
 
-				for (let i = 0; i < eventCount; i++) {
-					const allDay = this.rnd(0, 3) === 0
-					const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-					const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-					const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-					const second = new Date(first.getTime() + secondTimestamp)
-
-					events.push({
-					name: this.names[this.rnd(0, this.names.length - 1)],
-					start: first,
-					end: second,
-					color: this.colors[this.rnd(0, this.colors.length - 1)],
-					timed: !allDay,
-					})
-				}
-
-				this.events = events
-			},
-			getEventColor (event) {
-				return event.color
 			},
 			rnd (a, b) {
 				return Math.floor((b - a + 1) * Math.random()) + a
 			},
+			obtener_calendario(){
+
+				const data = {
+
+					url: 'obtener_calendario',
+					data: null
+
+				}
+
+				request.post(data)
+				.then((response) => {
+					this.events = response.data
+				})
+
+			},
+			close_modal(){
+
+                this.$refs.modal.close()
+				this.idItem = null
+				this.idEvento = null
+
+            },
+			hoy(){
+
+
+
+			},
+			clear_form(){
+
+				this.idItem = null
+				this.idEvento = null
+				this.$refs.form.clear()
+
+			}
 		},
+		mounted(){
+
+			this.obtener_calendario()
+
+		}
   }
 </script>

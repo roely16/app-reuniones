@@ -127,6 +127,7 @@
 			},
 			salir(){
 
+				localStorage.removeItem('app-reuniones')
 				this.$router.push({ name: 'login' })
 
 			}

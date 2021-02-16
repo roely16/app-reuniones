@@ -130,9 +130,13 @@
 
             obtener_reuniones(){
                 
+                let usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
                 const data = {
                     url: 'obtener_reuniones',
-                    data: null
+                    data: {
+                        id_usuario: usuario.id
+                    }
                 }
 
                 request.post(data)
@@ -150,7 +154,6 @@
                 this.idItem = null
                 this.fullscreen = true
                 this.$refs.modal.show()
-                //this.$refs.form.clear()
 
             },
             registrar(){

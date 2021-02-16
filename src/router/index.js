@@ -49,7 +49,39 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  routes
+	routes
 })
+
+router.beforeEach((to, from, next) => {
+	
+	let usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
+	if(!usuario){
+
+		usuario = {
+			
+		}
+
+	}
+	
+	if (to.name != 'login') {
+		
+		if (usuario.id == null) {
+
+			return next('/');
+
+		}
+
+	}
+	if (to.name == 'login') {
+
+		if (usuario.id != null) {
+			
+			return next('/home');
+		}
+	}
+	
+	next();
+});
 
 export default router
