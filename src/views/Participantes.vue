@@ -43,6 +43,11 @@
                                     </v-avatar>
                                 </template>
 
+                                <template v-slot:[`item.rol`]="data">
+                                    <v-chip v-if="data.item.rol" small :color="data.item.rol.color" dark>
+                                        {{ data.item.rol.nombre }}
+                                    </v-chip>
+                                </template>
                             </v-data-table>
                         </v-col>
                     </v-row>
@@ -101,9 +106,13 @@
             },
             obtener_datos(){
 
+                const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
                 const data = {
                     url: 'obtener_participantes',
-                    data: []
+                    data: {
+                        id_usuario: usuario.id
+                    }
                 }
 
                 request.post(data)

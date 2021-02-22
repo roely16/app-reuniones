@@ -61,6 +61,14 @@
                      <v-col cols="6" v-if="participante.usuario || participante.habilitar_usuario">
                         <v-select v-model="participante.id_rol" :rules="[ v => !!v ]" :items="roles" item-text="nombre" item-value="id" autocomplete="off" outlined hide-details label="Rol"></v-select>
                     </v-col>
+                    <v-col v-if="participante.id_rol == '2'">
+                        <v-checkbox
+                            :readonly="participante.grupo == 'S'"
+                            v-model="participante.grupo"
+                            label="Habilitar Grupo Personalizado"
+                            hide-details
+                        ></v-checkbox>
+                    </v-col>
 
                 </v-row>
 
@@ -103,6 +111,7 @@
                     habilitar_usuario: null,
                     password: null,
                     show_password: false,
+                    grupo: null,
                     id_rol: null
                 },
                 roles: [],
@@ -121,6 +130,11 @@
 
                 if (this.valid) {
                     
+                    const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
+                    // Se envia quien esta registrando a la persona
+                    this.participante.registrado_por = usuario.id
+
                     const data = {
                         url: 'registrar_participante',
                         data: this.participante
@@ -129,6 +143,8 @@
                     request.post(data)
                     .then((response) => {
 
+                        console.log(response.data)
+                        
                         if (this.avatar) {
                             
                             let formData = new FormData()
@@ -232,9 +248,13 @@
             },
             obtener_datos(){
 
+                const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
                 const data = {
                     url: 'obtener_roles',
-                    data: null
+                    data: {
+                        id_usuario: usuario.id
+                    }
                 }
 
                 request.post(data)

@@ -85,10 +85,14 @@
 		methods: {
 			obtener_datos(){
 
+				const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
 				const data = {
 
 					url: 'personas_compartir',
-					data: null
+					data: {
+						id_usuario: usuario.id
+					}
 
 				}
 

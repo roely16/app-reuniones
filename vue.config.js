@@ -4,6 +4,12 @@ module.exports = {
   transpileDependencies: [
     'vuetify'
   ],
+  publicPath: process.env.NODE_ENV === 'production' ? '/apps/app-reuniones/' : '/',
+  pwa: {
+    workboxOptions: {
+      skipWaiting: true
+    }
+  },
   devServer: {
     host: 'localhost'
   },

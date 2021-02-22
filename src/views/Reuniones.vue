@@ -9,7 +9,17 @@
                         <v-col md="4" cols="8">
                             <v-text-field outlined autocomplete="off" label="Buscar... " hide-details prepend-inner-icon="mdi-magnify"></v-text-field>
                         </v-col>
-                        <v-col align="end" md="8" cols="4">
+                        <v-col md="4">
+                            <v-alert
+                                text
+                                type="error"
+                                icon="mdi-calendar"
+                                class="mb-0"
+                            >
+                                PARTIPACIÓN CALENDARIZADA
+                            </v-alert>
+                        </v-col>
+                        <v-col align="end" md="4" cols="4">
                             <v-btn @click="mostrar_modal()" color="green accent-4" dark>
                                 <v-icon>
                                     mdi-plus

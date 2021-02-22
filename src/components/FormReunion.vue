@@ -48,7 +48,7 @@
                                             Compartir
                                         </v-col>
                                         <v-col align="end">
-                                            <v-btn :disabled="!idItem" @click="compartir()" text>
+                                            <v-btn :disabled="!idItem || sending" :loading="sending" @click="compartir()" text>
                                                 <v-icon>
                                                     mdi-export-variant
                                                 </v-icon>
@@ -174,7 +174,8 @@
                 isUpdating: false,
                 pdf_vistaprevia: null,
                 loading_preview: false,
-                observaciones: null
+                observaciones: null,
+                sending: false
                
             }
         },
@@ -182,10 +183,14 @@
 
             personas_compartir(){
 
+                const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
                 const data = {
 
                     url: 'personas_compartir',
-                    data: null
+                    data: {
+                        id_usuario: usuario.id
+                    }
 
                 }
 
@@ -258,6 +263,8 @@
 
                     if (result.isConfirmed) {
 
+                        this.sending = true
+
                         const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
 
                         const data = {
@@ -271,7 +278,19 @@
 
                         request.post(data)
                         .then((response) => {
+
                             console.log(response.data)
+
+                            if (response.data) {
+                                
+                                alert.show_alert(response.data)
+                                .then((result) => {
+                                    
+                                    this.sending = false
+                                    
+                                })
+
+                            }
                         })
 
                     }
@@ -342,6 +361,11 @@
                 this.content = null
                 this.observaciones = null
                 this.pdf_vistaprevia = null
+
+            },
+            verificar_permiso(){
+
+                
 
             }
 

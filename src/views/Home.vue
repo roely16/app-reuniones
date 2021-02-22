@@ -8,6 +8,12 @@
 				<v-toolbar-title>Control de Reuniones</v-toolbar-title>
 
 				<v-spacer></v-spacer>
+				
+				<v-btn @click="mostrar_conf" icon>
+					<v-icon>
+						mdi-cogs
+					</v-icon>
+				</v-btn>
 
 			</v-app-bar>
 			
@@ -23,6 +29,9 @@
 								
 									<v-list-item-title class="subtitle">{{ persona.nombres }} {{ persona.apellidos }}</v-list-item-title>
 									<v-list-item-subtitle>{{ persona.cargo }}</v-list-item-subtitle>
+									<v-list-item-subtitle>
+										<v-chip dark :color="rol.color" x-small label>{{ rol.nombre }}</v-chip>
+									</v-list-item-subtitle>
 							</v-list-item-content>
 						</v-list-item>
 						
@@ -31,12 +40,7 @@
 
 				
 				<template v-slot:append>
-					<!-- <v-list-item  link>
-						<v-list-item-icon>
-						<v-icon>mdi-logout</v-icon>
-						</v-list-item-icon>
-						<v-list-item-title>Salir</v-list-item-title>
-					</v-list-item> -->
+					
 					<div class="pa-2">
 						<v-btn @click="salir()" color="red" dark block>
 							Salir 
@@ -73,6 +77,17 @@
 				</v-row>
 
 				<router-view></router-view>
+
+				<Modal @clear_form="clear_form" ref="modal" :title="title" :fullscreen="fullscreen" :width="width">
+
+					<template #form>
+
+						<FormConfig ref="form" @closeModal="closeModal"></FormConfig>
+
+					</template>
+
+				</Modal>
+
 			</v-container>
 
 		</v-app>
@@ -83,13 +98,24 @@
 
 	import request from '@/functions/request'
 
+	import Modal from '@/components/Modal'
+	import FormConfig from '@/components/FormConfig'
+
 	export default {
+		components: {
+			Modal,
+			FormConfig
+		},
 		data(){
 			return{
 				drawer: false,
 				persona: {},
 				api: process.env.VUE_APP_API_URL,
-				menu: []
+				menu: [],
+				title: null,
+				fullscreen: false,
+				width: null,
+				rol: {}
 			}
 		},
 		methods: {
@@ -112,6 +138,7 @@
 				.then(( response ) => {
 
 					this.persona = response.data.persona
+					this.rol = response.data.rol
 
 					if (this.persona.avatar) {
 						
@@ -130,6 +157,24 @@
 				localStorage.removeItem('app-reuniones')
 				this.$router.push({ name: 'login' })
 
+			},
+			mostrar_conf(){
+
+				this.title = "Configuración"
+				this.width = '500'
+				this.$refs.modal.show()
+
+			},
+			closeModal(){
+
+				this.$refs.form.clear()
+				this.$refs.modal.close()
+
+			},
+			clear_form(){
+
+				this.$refs.form.clear()
+				
 			}
 
 		},
