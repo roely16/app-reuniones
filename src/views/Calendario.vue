@@ -1,137 +1,77 @@
 <template>
     <div class="mt-4">
-        <v-container fluid>
-            <v-card class="pt-5 pr-5 pl-5 pb-5" outlined>
-                <!-- <v-sheet
-                tile
-                height="54"
-                class="d-flex"
-                >
-                <v-btn
-                    icon
-                    class="ma-2"
-                    @click="$refs.calendar.prev()"
-                >
-                    <v-icon>mdi-chevron-left</v-icon>
-                </v-btn>
-                <v-select
-                    v-model="type"
-                    :items="types"
-                    dense
-                    outlined
-                    hide-details
-                    class="ma-2"
-                    label="type"
-                ></v-select>
-                <v-select
-                    v-model="mode"
-                    :items="modes"
-                    dense
-                    outlined
-                    hide-details
-                    label="event-overlap-mode"
-                    class="ma-2"
-                ></v-select>
-                <v-select
-                    v-model="weekday"
-                    :items="weekdays"
-                    dense
-                    outlined
-                    hide-details
-                    label="weekdays"
-                    class="ma-2"
-                ></v-select>
-                <v-spacer></v-spacer>
-                <v-btn
-                    icon
-                    class="ma-2"
-                    @click="$refs.calendar.next()"
-                >
-                    <v-icon>mdi-chevron-right</v-icon>
-                </v-btn>
-                </v-sheet> -->
+		<v-container fluid>
+			<v-card class="pt-5 pr-5 pl-5 pb-5" outlined>
+				
+				<v-sheet height="64">
+					<v-toolbar
+						flat
+					>
+					
+						<v-btn
+							outlined
+							class="mr-4"
+							color="grey darken-2"
+							@click="type = 'month'"
+							:disabled="type == 'month'"
+						>
+							<v-icon>
+								mdi-arrow-left
+							</v-icon>
+						</v-btn>
+						<v-btn
+							fab
+							text
+							small
+							color="grey darken-2"
+							@click="$refs.calendar.prev()"
+						>
+							<v-icon small>
+							mdi-chevron-left
+							</v-icon>
+						</v-btn>
+						<v-btn
+							fab
+							text
+							small
+							color="grey darken-2"
+							@click="$refs.calendar.next()"
+						>
+							<v-icon small>
+							mdi-chevron-right
+							</v-icon>
+						</v-btn>
+						<v-toolbar-title v-if="$refs.calendar">
+							{{ $refs.calendar.title }}
+						</v-toolbar-title>
+						<v-spacer></v-spacer>
+					</v-toolbar>
+				</v-sheet>
+				<v-sheet class="mt-4" height="600">
+					<v-calendar
+						ref="calendar"
+						v-model="value"
+						:weekdays="weekday"
+						:type="type"
+						:events="events"
+						:event-overlap-mode="mode"
+						:event-overlap-threshold="30"
+						
+						@click:event="editar_encargado"
+						@click:date="agregar_encargado"
+						@click:more="more"
+					></v-calendar>
+					
+				</v-sheet>
+			</v-card>
 
-                <v-sheet height="64">
-                  <v-toolbar
-                    flat
-                  >
-                    <!-- <v-btn
-						outlined
-						class="mr-4"
-						color="grey darken-2"
-						@click="hoy"
-                    >
-                      hoy
-                    </v-btn> -->
-					<v-btn
-						outlined
-						class="mr-4"
-						color="grey darken-2"
-						@click="type = 'month'"
-						:disabled="type == 'month'"
-                    >
-						<v-icon>
-							mdi-arrow-left
-						</v-icon>
-                    </v-btn>
-                    <v-btn
-                      fab
-                      text
-                      small
-                      color="grey darken-2"
-                      @click="$refs.calendar.prev()"
-                    >
-                      <v-icon small>
-                        mdi-chevron-left
-                      </v-icon>
-                    </v-btn>
-                    <v-btn
-                      fab
-                      text
-                      small
-                      color="grey darken-2"
-                      @click="$refs.calendar.next()"
-                    >
-                      <v-icon small>
-                        mdi-chevron-right
-                      </v-icon>
-                    </v-btn>
-                    <v-toolbar-title v-if="$refs.calendar">
-                      {{ $refs.calendar.title }}
-                    </v-toolbar-title>
-                    <v-spacer></v-spacer>
-                  </v-toolbar>
-                </v-sheet>
-                <v-sheet class="mt-4" height="600">
-                <v-calendar
-                    ref="calendar"
-                    v-model="value"
-                    :weekdays="weekday"
-                    :type="type"
-                    :events="events"
-                    :event-overlap-mode="mode"
-                    :event-overlap-threshold="30"
-                   
-                    @click:event="editar_encargado"
-                    @click:date="agregar_encargado"
-					@click:more="more"
-                ></v-calendar>
-                
-                </v-sheet>
-            </v-card>
-
-            <Modal @clear_form="clear_form" ref="modal" :title="title" :fullscreen="fullscreen" :width="width">
+			<Modal @clear_form="clear_form" ref="modal" :title="title" :fullscreen="fullscreen" :width="width">
 				<template #form>
 					<FormCalendario ref="form" @saved="obtener_calendario" :idItem="idItem" :idEvento="idEvento" :date="date" :selectedEvent="selectedEvent" @closeModal="close_modal"></FormCalendario>
 				</template>
-            </Modal>
+			</Modal>
 
-			<!--  
-				TODO
-				- Eliminar el evento
-			-->
-
-        </v-container>
+		</v-container>
   </div>
 </template>
 
@@ -188,13 +128,17 @@
 			},
 			editar_encargado({ event }){
 
-				this.title = "Editar Participante"
-				this.fullscreen = false
-				this.width = "700"
-				this.date = null
-				this.idItem = event.id_persona
-				this.idEvento = event.id
-				this.$refs.modal.show()
+				if (event.editable) {
+					
+					this.title = "Editar Participante"
+					this.fullscreen = false
+					this.width = "700"
+					this.date = null
+					this.idItem = event.id_persona
+					this.idEvento = event.id
+					this.$refs.modal.show()
+
+				}
 
 			},
 			more({date}){
@@ -208,10 +152,15 @@
 			},
 			obtener_calendario(){
 
+				const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
 				const data = {
 
 					url: 'obtener_calendario',
-					data: null
+					data: {
+						id_usuario: usuario.id,
+						id_persona: usuario.id_persona
+					}
 
 				}
 

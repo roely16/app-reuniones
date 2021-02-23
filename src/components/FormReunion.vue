@@ -17,7 +17,7 @@
                 <v-col>
                     <v-row>
                         <v-col cols="12">
-                            <v-card outlined>
+                            <v-card height="390" outlined>
                                 <v-card-title>
                                     <v-row dense>
                                         <v-col>
@@ -43,11 +43,25 @@
                         <v-col cols="12">
                             <v-card height="260" outlined>
                                 <v-card-title>
-                                    <v-row dense>
-                                        <v-col>
+                                    <v-row align="center" class="mb-2 mt-2" dense>
+                                        <v-col md="3">
                                             Compartir
                                         </v-col>
-                                        <v-col align="end">
+
+                                         <v-col md="7">
+                                            <v-alert
+                                                text
+                                                type="error"
+                                                icon="mdi-calendar"
+                                                class="mb-0"
+                                                dense
+                                                max-width="320"
+                                                v-if="participacion"
+                                            >
+                                                PARTIPACIÓN CALENDARIZADA
+                                            </v-alert>
+                                        </v-col>
+                                        <v-col align="end" md="2">
                                             <v-btn :disabled="!idItem || sending" :loading="sending" @click="compartir()" text>
                                                 <v-icon>
                                                     mdi-export-variant
@@ -175,7 +189,9 @@
                 pdf_vistaprevia: null,
                 loading_preview: false,
                 observaciones: null,
-                sending: false
+                sending: false,
+                acceso: false,
+                participacion: false
                
             }
         },
@@ -363,9 +379,25 @@
                 this.pdf_vistaprevia = null
 
             },
-            verificar_permiso(){
+            verificar_participacion(){
 
-                
+                const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
+                const data = {
+                    url: 'verificar_participacion',
+                    data: {
+                        id: usuario.id,
+                        id_persona: usuario.id_persona
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+
+                    this.acceso = response.data.acceso
+                    this.participacion = response.data.participacion
+
+                })
 
             }
 
@@ -376,6 +408,7 @@
 
                 if (val) {
                     
+                    this.verificar_participacion()
                     this.obtener_detalle()
 
                 }else{
@@ -391,6 +424,7 @@
 
             if (this.idItem) {
                 
+                this.verificar_participacion()
                 this.obtener_detalle()
 
             }else{
@@ -399,6 +433,7 @@
 
             }
 
+            this.verificar_participacion()
             this.personas_compartir()
 
         }

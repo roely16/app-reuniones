@@ -89,9 +89,10 @@
 
 				const data = {
 
-					url: 'personas_compartir',
+					url: 'personas_calendario',
 					data: {
-						id_usuario: usuario.id
+						id_usuario: usuario.id,
+						id_persona: usuario.id_persona
 					}
 
 				}
@@ -110,12 +111,15 @@
 
 				if (this.valid) {
 					
+					const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
 					const data = {
 						url: 'registrar_calendario',
 						data: {
 							id_persona: this.participanteSelect,
 							fecha: this.date,
 							color: this.colors[this.rnd(0, this.colors.length - 1)],
+							id_usuario: usuario.id
 						}
 					}
 

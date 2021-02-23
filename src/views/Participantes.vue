@@ -28,7 +28,7 @@
                                         </v-icon>
                                     </v-btn>
 
-                                    <v-btn icon color="red" @click="eliminar(data.item)">
+                                    <v-btn :disabled="!data.item.deletable" icon color="red" @click="eliminar(data.item)">
                                         <v-icon>
                                             mdi-delete
                                         </v-icon>

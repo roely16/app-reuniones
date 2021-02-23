@@ -15,12 +15,15 @@
                                 type="error"
                                 icon="mdi-calendar"
                                 class="mb-0"
-                            >
+                                v-if="participacion"
+                                max-width="320"
+                            > 
                                 PARTIPACIÓN CALENDARIZADA
                             </v-alert>
                         </v-col>
                         <v-col align="end" md="4" cols="4">
-                            <v-btn @click="mostrar_modal()" color="green accent-4" dark>
+                            
+                            <v-btn :disabled="!acceso && !participacion" @click="mostrar_modal()" color="green accent-4" dark>
                                 <v-icon>
                                     mdi-plus
                                 </v-icon>
@@ -132,7 +135,9 @@
                 headers: [],
                 api: process.env.VUE_APP_API_URL,
                 idItem: null,
-                width: null
+                width: null,
+                acceso: false,
+                participacion: false
 
             }
         },
@@ -240,11 +245,33 @@
                 this.idItem = item.id
                 this.$refs.modal_historial.show()
 
+            },
+            verificar_participacion(){
+
+                const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
+                const data = {
+                    url: 'verificar_participacion',
+                    data: {
+                        id: usuario.id,
+                        id_persona: usuario.id_persona
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+
+                    this.acceso = response.data.acceso
+                    this.participacion = response.data.participacion
+
+                })
+
             }
             
         },
         mounted(){
 
+            this.verificar_participacion()
             this.obtener_reuniones()
 
         }
