@@ -231,13 +231,17 @@
             },
             recargar_vistaprevia(){
 
+                const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
+
                 this.loading_preview = true
 
                 const data = {
 
                     url: 'generar_vistaprevia',
                     data: {
-                        content: this.content
+                        content: this.content,
+                        id: this.idItem,
+                        usuario: usuario.id
                     }
 
                 }
