@@ -2,45 +2,26 @@
     <div>
         <v-container fluid>
             
+
+
             <v-row class="mt-2">
                 <v-col cols="7">
 
-                    <quill-editor
-                        class="editor"
-                        ref="myQuillEditor"
-                        v-model="content"
-                        :options="editorOption"
-                        
-                    />
-    
-                </v-col>
-                <v-col>
                     <v-row>
                         <v-col cols="12">
-                            <v-card height="390" outlined>
-                                <v-card-title>
-                                    <v-row dense>
-                                        <v-col>
-                                            Vista Previa
-                                        </v-col>
-                                        <v-col align="end">
-                                            
-                                            <v-btn :loading="loading_preview" :disabled="loading_preview" @click="recargar_vistaprevia()" text>
-                                                <v-icon>
-                                                    mdi-refresh
-                                                </v-icon>
-                                            </v-btn>
-                                            
-                                        </v-col>
-                                    </v-row>
-                                </v-card-title>
-                                <v-card-text>
-                                    <iframe v-if="!loading_preview" :src="pdf_vistaprevia" width="100%" height="300px">
-                                    </iframe>
-                                </v-card-text>
-                            </v-card>
+                            <v-tabs>
+                                <v-tab>Datos Generales</v-tab>
+                                <v-tab>Agenda</v-tab>
+                                <v-tab>Pendientes</v-tab>
+                            </v-tabs>
                         </v-col>
                         <v-col cols="12">
+                            <Encabezado />
+                        </v-col>
+                    </v-row>
+
+                    <v-row>
+                         <v-col cols="12">
                             <v-card height="260" outlined>
                                 <v-card-title>
                                     <v-row align="center" class="mb-2 mt-2" dense>
@@ -116,15 +97,52 @@
                             </v-card>
                         </v-col>
                     </v-row>
+                    <!-- <quill-editor
+                        class="editor"
+                        ref="myQuillEditor"
+                        v-model="content"
+                        :options="editorOption"
+                        
+                    /> -->
+    
+                </v-col>
+                <v-col>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-card height="800" outlined>
+                                <v-card-title>
+                                    <v-row dense>
+                                        <v-col>
+                                            Vista Previa
+                                        </v-col>
+                                        <v-col align="end">
+                                            
+                                            <v-btn :loading="loading_preview" :disabled="loading_preview" @click="recargar_vistaprevia()" text>
+                                                <v-icon>
+                                                    mdi-refresh
+                                                </v-icon>
+                                            </v-btn>
+                                            
+                                        </v-col>
+                                    </v-row>
+                                </v-card-title>
+                                <v-card-text>
+                                    <iframe v-if="!loading_preview" :src="pdf_vistaprevia" width="100%" height="700px">
+                                    </iframe>
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
+                       
+                    </v-row>
                 </v-col>
             </v-row>
 
             <!-- Observaciones -->
-            <v-row>
+            <!-- <v-row>
                 <v-col cols="7">
                     <v-textarea v-model="observaciones" rows="4" label="Observaciones" outlined hide-details></v-textarea>
                 </v-col>
-            </v-row>
+            </v-row> -->
         </v-container>
     </div>
 </template>
@@ -132,12 +150,14 @@
 <style scoped>
     .editor{
 
-        height: 605px;
+        height: 50px;
 
     }
 </style>
 
 <script>
+
+    import Encabezado from '@/components/Reunion/Encabezado'
 
     /* eslint-disable no-unused-vars */
     import request from '@/functions/request.js'
@@ -145,7 +165,7 @@
 
     export default {
         components: {
-           
+           Encabezado
         },
         props: {
             idItem: Number
