@@ -3,7 +3,7 @@
         <v-container fluid>
         
             <v-row class="mt-2">
-                <v-col cols="7">
+                <v-col cols="7" class="pr-0 mr-0">
                     <v-row class="mb-4">
                         <v-col cols="12" class="pt-0">
                             <v-tabs v-model="tab">
@@ -101,7 +101,7 @@
                     </v-row> -->
                    
                 </v-col>
-                <v-divider vertical></v-divider>
+                <v-divider class="ml-4 mr-4" vertical></v-divider>
                 <v-col>
                     <v-row>
                         <v-col cols="12">

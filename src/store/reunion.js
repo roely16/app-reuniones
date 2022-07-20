@@ -21,7 +21,7 @@ const state = {
 			actividad: null,
 			responsable: null
 		}
-	]
+	],
 }
 
 const mutations = {
@@ -36,6 +36,9 @@ const mutations = {
 	},
 	quitar_pendiente: (state, payload) => {
 		state.pendientes.splice(payload, 1)
+	},
+	setPDF: (state, payload) => {
+		state.pdf_url = payload
 	}
 }
 
