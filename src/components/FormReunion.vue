@@ -1,28 +1,30 @@
 <template>
     <div>
         <v-container fluid>
-            
-
-
+        
             <v-row class="mt-2">
                 <v-col cols="7">
-
-                    <v-row>
-                        <v-col cols="12">
-                            <v-tabs>
-                                <v-tab>Datos Generales</v-tab>
-                                <v-tab>Agenda</v-tab>
-                                <v-tab>Pendientes</v-tab>
+                    <v-row class="mb-4">
+                        <v-col cols="12" class="pt-0">
+                            <v-tabs v-model="tab">
+                                <v-tab v-for="(tab, i) in tabs" :key="i">
+                                    {{ tab.text }}
+                                </v-tab>
                             </v-tabs>
                         </v-col>
                         <v-col cols="12">
-                            <Encabezado />
+                            <v-card elevation="0">
+                                <v-card-text class="mt-0 pt-0">
+                                    <component v-bind:is="currentTab"></component>
+                                </v-card-text>
+                            </v-card>
                         </v-col>
                     </v-row>
 
+                    <!-- <v-divider></v-divider>
                     <v-row>
                          <v-col cols="12">
-                            <v-card height="260" outlined>
+                            <v-card height="260" elevation="0">
                                 <v-card-title>
                                     <v-row align="center" class="mb-2 mt-2" dense>
                                         <v-col md="3">
@@ -96,43 +98,15 @@
                                 </v-card-text>
                             </v-card>
                         </v-col>
-                    </v-row>
-                    <!-- <quill-editor
-                        class="editor"
-                        ref="myQuillEditor"
-                        v-model="content"
-                        :options="editorOption"
-                        
-                    /> -->
-    
+                    </v-row> -->
+                   
                 </v-col>
+                <v-divider vertical></v-divider>
                 <v-col>
                     <v-row>
                         <v-col cols="12">
-                            <v-card height="800" outlined>
-                                <v-card-title>
-                                    <v-row dense>
-                                        <v-col>
-                                            Vista Previa
-                                        </v-col>
-                                        <v-col align="end">
-                                            
-                                            <v-btn :loading="loading_preview" :disabled="loading_preview" @click="recargar_vistaprevia()" text>
-                                                <v-icon>
-                                                    mdi-refresh
-                                                </v-icon>
-                                            </v-btn>
-                                            
-                                        </v-col>
-                                    </v-row>
-                                </v-card-title>
-                                <v-card-text>
-                                    <iframe v-if="!loading_preview" :src="pdf_vistaprevia" width="100%" height="700px">
-                                    </iframe>
-                                </v-card-text>
-                            </v-card>
+                            <vista-previa></vista-previa>
                         </v-col>
-                       
                     </v-row>
                 </v-col>
             </v-row>
@@ -158,6 +132,7 @@
 <script>
 
     import Encabezado from '@/components/Reunion/Encabezado'
+    import VistaPrevia from '@/components/Reunion/VistaPrevia'
 
     /* eslint-disable no-unused-vars */
     import request from '@/functions/request.js'
@@ -165,7 +140,8 @@
 
     export default {
         components: {
-           Encabezado
+           Encabezado,
+           'vista-previa': VistaPrevia
         },
         props: {
             idItem: Number
@@ -211,7 +187,25 @@
                 observaciones: null,
                 sending: false,
                 acceso: false,
-                participacion: false
+                participacion: false,
+                tab: 0,
+                tabs: [
+                    {
+                        id: 1,
+                        text: 'Datos Generales',
+                        component: 'Encabezado'
+                    },
+                    {
+                        id: 2,
+                        text: 'Agenda',
+                        component: 'Agenda'
+                    },
+                    {
+                        id: 3,
+                        text: 'Pendientes',
+                        component: 'Pendientes'
+                    }
+                ]
                
             }
         },
@@ -424,6 +418,21 @@
                 })
 
             }
+
+        },
+        computed: {
+
+            currentTab: function(){
+
+				const name = this.tabs[this.tab].component
+
+				const AsyncComponent = () => ({
+					component: import('@/components/Reunion/' + name),				
+				})
+	
+				return AsyncComponent
+
+			}
 
         },
         watch: {

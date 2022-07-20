@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-container fluid>
-            <v-card outlined>
+            <v-card elevation="0">
                 
                 <v-card-text>
 
@@ -33,7 +33,7 @@
 
                     <v-row>
                         <v-col>
-                            <v-data-table :items="items" :headers="headers">
+                            <v-data-table :loading="loading" :items="reuniones.items" :headers="reuniones.headers">
                                  <template v-slot:[`item.action`]="data">
 
                                     <v-btn icon color="success" @click="mostrar_historial(data.item)">
@@ -48,7 +48,7 @@
                                         </v-icon>
                                     </v-btn>
 
-                                    <v-btn icon color="red" @click="eliminar(data.item)">
+                                    <v-btn icon color="red" @click="fetchEliminar(data.item)">
                                         <v-icon>
                                             mdi-delete
                                         </v-icon>
@@ -75,7 +75,7 @@
             <Modal @clear_form="clear_form" :fullscreen="fullscreen" ref="modal" :title="title">
                 <template #form>
                     
-                    <FormReunion @saved="(data) => saved(data)" :idItem="idItem" @updateTable="obtener_reuniones" ref="form"></FormReunion>
+                    <FormReunion @saved="(data) => saved(data)" :idItem="idItem" @updateTable="fetchReuniones" ref="form"></FormReunion>
 
                 </template>
 
@@ -117,52 +117,26 @@
     import FormReunion from '@/components/FormReunion'
     import FormHistorial from '@/components/FormHistorial'
 
-    export default {
-        
-        components: {
+    import { mapState, mapActions } from 'vuex'
 
+    export default {
+        components: {
             Modal,
             FormReunion,
             FormHistorial
-
         },
         data(){
             return{
-
                 title: null,
                 fullscreen: true,
                 items: [],
                 headers: [],
                 api: process.env.VUE_APP_API_URL,
                 idItem: null,
-                width: null,
-                acceso: false,
-                participacion: false
-
+                width: null
             }
         },
         methods: {
-
-            obtener_reuniones(){
-                
-                let usuario = JSON.parse(localStorage.getItem('app-reuniones'))
-
-                const data = {
-                    url: 'obtener_reuniones',
-                    data: {
-                        id_usuario: usuario.id
-                    }
-                }
-
-                request.post(data)
-                .then((response) => {
-
-                    this.items = response.data.items
-                    this.headers = response.data.headers
-                    
-                })
-
-            },
             mostrar_modal(){
 
                 this.title = "Registrar Bitácora de Reunión"
@@ -184,49 +158,6 @@
                 this.$refs.modal.show()
 
             },
-            eliminar(item){
-
-                const data = {
-                    title: "¿Está seguro?",
-                    message: "Una vez eliminado no se podrá recuperar!",
-                    type: "warning",
-                    confirm_text: "Si, ELIMINAR!",
-                    cancel_text: "Cancelar"
-                }
-
-                alert.alert_confirm(data)
-                .then((result) => {
-                    
-                    if (result.isConfirmed) {
-
-                        const data_request = {
-                            url: 'eliminar_reunion',
-                            data: {
-                                id: item.id
-                            }
-                        }
-
-                        request.post(data_request)
-                        .then((response) => {
-                            
-                            alert.show_alert(response.data)
-                            .then(() => {
-
-                                if (response.data.status == 200) {
-                                    
-                                    this.obtener_reuniones()
-
-                                }
-
-                            })
-
-                        })
-
-                    }
-
-                })
-
-            },
             clear_form(){
 
                 this.idItem = null
@@ -246,33 +177,25 @@
                 this.$refs.modal_historial.show()
 
             },
-            verificar_participacion(){
-
-                const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
-
-                const data = {
-                    url: 'verificar_participacion',
-                    data: {
-                        id: usuario.id,
-                        id_persona: usuario.id_persona
-                    }
-                }
-
-                request.post(data)
-                .then((response) => {
-
-                    this.acceso = response.data.acceso
-                    this.participacion = response.data.participacion
-
-                })
-
-            }
-            
+            ...mapActions({
+                fetchReuniones: 'lista_minutas/fetchReuniones',
+                checkParticipacion: 'lista_minutas/checkParticipacion',
+                fetchEliminar: 'lista_minutas/fetchEliminar'
+            }) 
+        },
+        computed: {
+            ...mapState({
+                reuniones: state => state.lista_minutas.reuniones,
+                loading: state => state.lista_minutas.loading,
+                acceso: state => state.lista_minutas.acceso,
+                participacion: state => state.lista_minutas.participacion
+            })
         },
         mounted(){
 
-            this.verificar_participacion()
-            this.obtener_reuniones()
+            this.checkParticipacion()
+
+            this.fetchReuniones()
 
         }
 
