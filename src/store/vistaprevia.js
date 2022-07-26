@@ -21,6 +21,18 @@ const actions = {
 
 		try {
 			
+            const participantes = []
+
+            rootState.reunion.areas.forEach(area => {
+                
+                area.participantes.forEach(empleado => {
+                    
+                    participantes.push(empleado)
+
+                });
+
+            });
+
             commit('setLoading', true)
 
 			const data = {
@@ -28,7 +40,8 @@ const actions = {
                 data: {
                     encabezado: rootState.reunion.encabezado,
                     puntos_agenda: rootState.reunion.puntos_agenda,
-                    pendientes: rootState.reunion.pendientes
+                    pendientes: rootState.reunion.pendientes,
+                    participantes: participantes
                 }
             }
 

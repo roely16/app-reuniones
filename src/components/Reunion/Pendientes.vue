@@ -4,7 +4,7 @@
 			<v-col class="mb-0 pb-0" cols="12" v-for="(pendiente, key) in pendientes" :key="key">
 				<v-textarea v-model="pendiente.actividad" no-resize :rows="3" label="Tarea" hide-details filled rounded>
 					<template v-slot:append>
-						<v-icon @click="agregarResponsable()" color="primary">
+						<v-icon @click="agregar_responsable()" color="primary">
 							mdi-account-plus
 						</v-icon>
 						<v-icon @click="quitar_pendiente(key)" v-if="key > 0" class="ml-2" color="error">
@@ -25,6 +25,12 @@
 				</v-btn>
 			</v-col>
 		</v-row>
+
+		<modal title="Responsable" width="400" ref="modal">
+			<template ref="form">
+				<responsable></responsable>
+			</template>
+		</modal>
 	</div>
 </template>
 
@@ -32,7 +38,14 @@
 
 import { mapState, mapMutations, mapActions } from 'vuex'
 
+import Dialog from '@/components/Modal'
+import Responsable from '@/components/Reunion/Responsable'
+
 export default {
+	components: {
+		'modal': Dialog,
+		'responsable': Responsable
+	},
 	methods: {
 		...mapMutations({
 			quitar_pendiente: 'reunion/quitar_pendiente',
@@ -40,7 +53,12 @@ export default {
 		}),
 		...mapActions({
 			agregarResponsable: 'reunion/agregarResponsable'
-		})
+		}),
+		agregar_responsable(){
+
+			this.$refs.modal.show()
+
+		}
 	},
 	computed: {
 		...mapState({

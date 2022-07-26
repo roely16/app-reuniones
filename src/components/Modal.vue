@@ -1,11 +1,11 @@
 <template>
     <div>
-
         <v-row justify="center">
             <v-dialog
                 v-model="dialog"
                 :fullscreen="fullscreen"
                 :width="width"
+                :scrollable="!fullscreen"
             >
             
                 <v-card>
@@ -30,9 +30,12 @@
                         </v-toolbar-items>
                     </v-toolbar>
 
-                    <slot name="form">
+                    <v-card-text>
+                        <slot name="form">
 
-                    </slot>
+                        </slot>
+                    </v-card-text>
+                    
                     
                 </v-card>   
             </v-dialog>
@@ -43,13 +46,10 @@
 
 <script>
     export default {
-
         props: {
-
             title: String,
             fullscreen: Boolean,
             width: String
-
         },
         data () {
             return {
@@ -60,31 +60,20 @@
             }
         },
         methods: {
-
             show(){
-
                 this.dialog = true
-
             },
             close(){
-
                 this.dialog = false
-
             }
-
         },
         watch: {
-
             dialog: function(val){
-
                 if (!val) {
-                    
                     this.$emit('clear_form')
 
                 }
-
             }
-
         }
     }
 </script>
