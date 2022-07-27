@@ -143,6 +143,7 @@ const actions = {
 
 			state.encabezado.responsable = userData.nombre
 			state.encabezado.id_responsable = userData.id
+			state.encabezado.seccion = userData.area
 
 			const data = {
 				url: 'datos_formulario'
