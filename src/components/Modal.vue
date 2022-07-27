@@ -23,10 +23,14 @@
                         <v-toolbar-title>{{ title }}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
-                            
-                            <slot name="modal-corner-right">
+                            <v-row justify="center" align="center">
+                                <v-col>
+                                    <slot name="modal-corner-right">
 
-                            </slot>
+                                    </slot>
+                                </v-col>
+                            </v-row>
+                            
                         </v-toolbar-items>
                     </v-toolbar>
 

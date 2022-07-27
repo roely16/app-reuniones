@@ -3,7 +3,7 @@
         <v-container fluid>
             <v-row class="mt-4" justify="center">
                 <v-col cols="10">
-                    <v-autocomplete v-model="selected" item-text="nombre" item-value="nombre" :items="areas" label="Responsable" filled rounded>
+                    <v-autocomplete v-model="selected" item-text="nombre" item-value="nit" :items="areas" label="Responsable" filled rounded>
                         <template v-slot:item="data">
                             <v-list-item-content>
                                 <v-list-item-title v-html="data.item.nombre"></v-list-item-title>
@@ -18,13 +18,13 @@
 
             <v-row align="center" class="mt-4">
                 <v-col cols="7">
-                    <v-text-field dense readonly filled rounded hide-details label="Nombre"></v-text-field>
-                    <v-text-field dense readonly class="mt-2" filled rounded hide-details label="Coordinación o Sección"></v-text-field>
+                    <v-text-field v-model="responsable_detalle.nombre_completo" dense readonly filled rounded hide-details label="Nombre"></v-text-field>
+                    <v-text-field v-model="responsable_detalle.area" dense readonly class="mt-2" filled rounded hide-details label="Coordinación o Sección"></v-text-field>
                     <v-text-field dense readonly class="mt-2" filled rounded hide-details label="Puesto"></v-text-field>
                 </v-col>
                 <v-col class="text-center" cols="5">
-                    <v-avatar size="150">
-                        <v-img contain :src="require('@/assets/img/man.png')"></v-img>
+                    <v-avatar v-if="responsable_detalle.archivo" rounded size="150">
+                        <v-img :src="avatar_url"></v-img>
                     </v-avatar>
                 </v-col>
             </v-row>
@@ -41,7 +41,7 @@
 
 <script>
 
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     
@@ -52,23 +52,30 @@ export default {
     },
     methods: {
 
+        ...mapActions({
+            detalleColaborador: 'reunion/detalleColaborador'
+        }),
         update_pendiente(){
-
             this.$emit('update_pendiente', this.selected)
-
         }
 
     },
     computed: {
         ...mapState({
-            'areas': state => state.reunion.areas_pendientes
-        })
+            'areas': state => state.reunion.areas_pendientes,
+            'responsable_detalle': state => state.reunion.responsable_detalle
+        }),
+        avatar_url: function(){
+
+            return process.env.VUE_APP_API_IMAGES + this.responsable_detalle.archivo.ruta
+
+        }
     },
     watch: {
         selected: function(val){
 
             //Solicitar el detalle del colaborador
-            console.log(val)
+            this.detalleColaborador(val)
 
         }
     }

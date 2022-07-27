@@ -2,7 +2,7 @@
 	<div>
 		<v-row>
 			<v-col cols="6">
-				<v-text-field readonly v-model="encabezado.numero" rounded hide-details label="No. de Minuta" filled></v-text-field>
+				<v-text-field readonly v-model="encabezado.id" rounded hide-details label="No. de Minuta" filled></v-text-field>
 			</v-col>
 			<v-col cols="6">
 				<v-menu
@@ -92,7 +92,7 @@
 				
 			</v-col>
 			<v-col cols="12">
-				<v-textarea label="Comentarios" :rows="5" no-resize filled rounded hide-details></v-textarea>
+				<v-textarea v-model="encabezado.comentarios" label="Comentarios" :rows="5" no-resize filled rounded hide-details></v-textarea>
 			</v-col>
 		</v-row>
 

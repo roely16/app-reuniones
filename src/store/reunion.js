@@ -4,7 +4,7 @@ const namespaced = true
 
 const state = {
 	encabezado: {
-		numero: null,
+		id: null,
 		fecha: null,
 		seccion: null,
 		metodo: null,
@@ -12,7 +12,8 @@ const state = {
 		responsable: null,
 		id_responsable: null,
 		hora_inicio: null,
-		hora_fin: null
+		hora_fin: null,
+		comentarios: null
 	},
 	puntos_agenda: [
 		{
@@ -28,7 +29,9 @@ const state = {
 	metodos: [],
 	areas: [],
 	participantes_seleccionados: [],
-	areas_pendientes: []
+	areas_pendientes: [],
+	saving: false,
+	responsable_detalle: {}
 }
 
 const mutations = {
@@ -127,6 +130,21 @@ const mutations = {
 	},
 	setAreasPendientes: (state, payload) => {
 		state.areas_pendientes = payload
+	},
+	updateEncabezado: (state, payload) => {
+
+		state.encabezado.id = payload.id
+		state.encabezado.created_at = payload.created_at
+		state.encabezado.updated_at = payload.updated_at
+
+	},
+	setSaving: (state, payload) => {
+
+		state.saving = payload
+
+	},
+	setResponsableDetalle: (state, payload) => {
+		state.responsable_detalle = payload
 	}
 }
 
@@ -144,6 +162,8 @@ const actions = {
 			state.encabezado.responsable = userData.nombre
 			state.encabezado.id_responsable = userData.id
 			state.encabezado.seccion = userData.area
+			state.encabezado.codarea = userData.codarea
+			state.encabezado.nit = userData.nit
 
 			const data = {
 				url: 'datos_formulario'
@@ -191,6 +211,66 @@ const actions = {
 			const response = await request.post(data)
 
 			commit('setAreasPendientes', response.data.areas)
+
+			console.log(response.data)
+
+		} catch (error) {
+			
+			console.log(error)
+
+		}
+
+	},
+	async saveReunion({ state, commit, dispatch, getters }){
+
+		try {
+			
+			commit('setSaving', true)
+
+			const data_reunion = {
+				encabezado: state.encabezado,
+				puntos_agenda: state.puntos_agenda,
+				pendientes: state.pendientes,
+				participantes: getters.participantes_agregados
+			}
+
+			const data = {
+				url: 'registrar_reunion',
+				data: data_reunion
+			}
+
+			const response = await request.post(data)
+
+			commit('updateEncabezado', response.data.encabezado)
+			dispatch('vistaprevia/fetchPreview', null, {root: true})
+
+			commit('setSaving', false)
+
+			console.log(response.data)
+
+
+		} catch (error) {
+			
+			console.log(error)
+			commit('setSaving', false)
+
+		}
+
+	},
+	async detalleColaborador({ commit }, payload){
+
+		try {
+			
+			const data = {
+				url: 'detalle_colaborador',
+				data: {
+					nit: payload
+				}
+			}
+
+			const response = await request.post(data)
+
+			commit('setResponsableDetalle', response.data.colaborador)
 
 			console.log(response.data)
 

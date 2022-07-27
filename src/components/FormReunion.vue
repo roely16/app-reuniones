@@ -1,7 +1,6 @@
 <template>
     <div>
         <v-container fluid>
-        
             <v-row class="mt-2">
                 <v-col cols="7" class="pr-0 mr-0">
                     <v-row class="mb-4">
@@ -19,87 +18,7 @@
                                 </v-card-text>
                             </v-card>
                         </v-col>
-                    </v-row>
-
-                    <!-- <v-divider></v-divider>
-                    <v-row>
-                         <v-col cols="12">
-                            <v-card height="260" elevation="0">
-                                <v-card-title>
-                                    <v-row align="center" class="mb-2 mt-2" dense>
-                                        <v-col md="3">
-                                            Compartir
-                                        </v-col>
-
-                                         <v-col md="7">
-                                            <v-alert
-                                                text
-                                                type="error"
-                                                icon="mdi-calendar"
-                                                class="mb-0"
-                                                dense
-                                                max-width="320"
-                                                v-if="participacion"
-                                            >
-                                                PARTIPACIÓN CALENDARIZADA
-                                            </v-alert>
-                                        </v-col>
-                                        <v-col align="end" md="2">
-                                            <v-btn :disabled="!idItem || sending" :loading="sending" @click="compartir()" text>
-                                                <v-icon>
-                                                    mdi-export-variant
-                                                </v-icon>
-                                            </v-btn>
-                                        </v-col>
-                                    </v-row>
-                                </v-card-title>
-
-                                <v-card-text>
-                                    <v-autocomplete
-                                        v-model="personas_enviar"
-                                        :disabled="isUpdating"
-                                        :items="personas"
-                                        filled
-                                        chips
-                                        color="blue-grey lighten-2"
-                                        label="Personas"
-                                        item-text="nombre"
-                                        item-value="id"
-                                        multiple
-                                    >
-                                        <template v-slot:selection="data">
-                                            <v-chip
-                                            v-bind="data.attrs"
-                                            :input-value="data.selected"
-                                            close
-                                            @click="data.select"
-                                            @click:close="remove(data.item)"
-                                            >
-                                            <v-avatar left>
-                                                <v-img :src="data.item.avatar ? data.item.avatar : 'avatar/user.png'"></v-img>
-                                            </v-avatar>
-                                            {{ data.item.nombre }}
-                                            </v-chip>
-                                        </template>
-                                        <template v-slot:item="data">
-                                            
-                                            <template>
-                                                <v-list-item-avatar>
-                                                    <img :src="data.item.avatar ? data.item.avatar : 'avatar/user.png'">
-                                                </v-list-item-avatar>
-                                                <v-list-item-content>
-                                                    <v-list-item-title v-html="data.item.nombre"></v-list-item-title>
-                                                    <v-list-item-subtitle v-html="data.item.cargo"></v-list-item-subtitle>
-                                                </v-list-item-content>
-                                            </template>
-                                        </template>
-                                    </v-autocomplete>
-
-                                </v-card-text>
-                            </v-card>
-                        </v-col>
-                    </v-row> -->
-                   
+                    </v-row>                   
                 </v-col>
                 <v-divider class="ml-4 mr-4" vertical></v-divider>
                 <v-col>
@@ -108,15 +27,16 @@
                             <vista-previa></vista-previa>
                         </v-col>
                     </v-row>
+                    <v-row v-if="encabezado.updated_at">
+                        <v-col cols="12">
+                            <span class="font-italic">
+                                Última Actualización: {{ encabezado.updated_at }}
+                            </span>
+                        </v-col>
+                    </v-row>
                 </v-col>
             </v-row>
 
-            <!-- Observaciones -->
-            <!-- <v-row>
-                <v-col cols="7">
-                    <v-textarea v-model="observaciones" rows="4" label="Observaciones" outlined hide-details></v-textarea>
-                </v-col>
-            </v-row> -->
         </v-container>
     </div>
 </template>
@@ -137,6 +57,8 @@
     /* eslint-disable no-unused-vars */
     import request from '@/functions/request.js'
     import alert from '@/functions/alert.js'
+
+    import { mapState } from 'vuex'
 
     export default {
         components: {
@@ -422,6 +344,9 @@
         },
         computed: {
 
+            ...mapState({
+                encabezado: state => state.reunion.encabezado
+            }),
             currentTab: function(){
 
 				const name = this.tabs[this.tab].component

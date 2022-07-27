@@ -80,10 +80,21 @@
                 </template>
 
                 <template #modal-corner-right>
+                    
+                    <span v-if="saving" class="text-button">
+                        <v-progress-circular
+                            indeterminate
+                            dark
+                            size="25"
+                        ></v-progress-circular>
+                        Guardando...
+                    </span>
+
                     <v-btn
                         dark
                         text
                         @click="registrar()"
+                        :disabled="saving"
                     >
                         <v-icon>
                             mdi-content-save
@@ -147,7 +158,8 @@
             },
             registrar(){
 
-                this.$refs.form.registrar()
+                //this.$refs.form.registrar()
+                this.saveReunion()
 
             },
             mostrar_editar(item){
@@ -180,7 +192,8 @@
             ...mapActions({
                 fetchReuniones: 'lista_minutas/fetchReuniones',
                 checkParticipacion: 'lista_minutas/checkParticipacion',
-                fetchEliminar: 'lista_minutas/fetchEliminar'
+                fetchEliminar: 'lista_minutas/fetchEliminar',
+                saveReunion: 'reunion/saveReunion'
             }) 
         },
         computed: {
@@ -188,7 +201,8 @@
                 reuniones: state => state.lista_minutas.reuniones,
                 loading: state => state.lista_minutas.loading,
                 acceso: state => state.lista_minutas.acceso,
-                participacion: state => state.lista_minutas.participacion
+                participacion: state => state.lista_minutas.participacion,
+                saving: state => state.reunion.saving
             })
         },
         mounted(){
