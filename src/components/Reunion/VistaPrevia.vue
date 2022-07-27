@@ -49,9 +49,6 @@ export default {
             pdf_url: state => state.vistaprevia.pdf_url,
             loading: state => state.vistaprevia.loading
         })
-    },
-    mounted(){
-        this.fetchPreview()
     }
 }
 </script>

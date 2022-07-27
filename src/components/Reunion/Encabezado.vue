@@ -125,8 +125,9 @@ export default {
 	},
 	methods: {
 		...mapActions({
-			'datos_formulario': 'reunion/fetchDataForm',
-			'fetchParticipantes': 'reunion/fetchParticipantes'
+			datos_formulario: 'reunion/fetchDataForm',
+			fetchParticipantes: 'reunion/fetchParticipantes',
+			fetchPreview: 'vistaprevia/fetchPreview'
 		}),
 		agregar_participantes(){
 
@@ -157,7 +158,10 @@ export default {
 		}
 	},
 	mounted(){
+
 		this.datos_formulario()
+
+		this.fetchPreview()
 	}
 }
 </script>

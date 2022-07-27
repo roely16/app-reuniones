@@ -6,12 +6,14 @@
 
                 <v-row justify="center" align="center" dense>
                     <v-col cols="6">
-                        <v-card>
+                        <v-card elevation="0">
                             <v-card-text class="text-center" align="center" justify="center">
-                                <v-img width="130" contain :src="participante.avatar ? api + participante.avatar : url_image ? url_image : 'avatar/user.png'"></v-img>
+                                <v-avatar size="120">
+                                    <v-img width="130" contain :src="participante.avatar ? api + participante.avatar : url_image ? url_image : 'avatar/user.png'"></v-img>
+                                </v-avatar>
                             </v-card-text>
                             <v-card-text>
-                                 <v-file-input accept="image/*" @change="select_image" hide-details autocomplete="off" v-model="avatar" :prepend-icon="null" prepend-inner-icon="mdi-camera" filled label="Avatar"></v-file-input>
+                                 <v-file-input accept="image/*" @change="select_image" hide-details autocomplete="off" v-model="avatar" :prepend-icon="null" prepend-inner-icon="mdi-camera" filled rounded label="Avatar"></v-file-input>
                             </v-card-text>
                         </v-card>
                     </v-col>
@@ -20,22 +22,29 @@
                 <v-row >
                     
                     <v-col cols="6">
-                        <v-text-field :rules="[ v => !!v ]" v-model="participante.nombres" autocomplete="off" outlined hide-details label="Nombre"></v-text-field>
+                        <v-text-field :rules="[ v => !!v ]" v-model="participante.nombres" autocomplete="off" filled rounded hide-details label="Nombre"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field :rules="[ v => !!v ]" v-model="participante.apellidos" autocomplete="off" outlined hide-details label="Apellido"></v-text-field>
+                        <v-text-field :rules="[ v => !!v ]" v-model="participante.apellidos" autocomplete="off" filled rounded hide-details label="Apellido"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field :rules="[ v => !!v ]" v-model="participante.telefono" autocomplete="off" outlined hide-details label="Teléfono"></v-text-field>
+                        <v-text-field :rules="[ v => !!v ]" v-model="participante.telefono" autocomplete="off" filled rounded hide-details label="Teléfono"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="participante.cargo" autocomplete="off" outlined hide-details label="Cargo"></v-text-field>
+                        <v-text-field v-model="participante.cargo" autocomplete="off" filled rounded hide-details label="Cargo"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="participante.email" autocomplete="off" outlined hide-details label="Email"></v-text-field>
+                        <v-text-field v-model="participante.email" autocomplete="off" filled rounded hide-details label="Email"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-
+                        <v-autocomplete v-model="participante.nit" item-text="nombre" item-value="nit" :items="areas" label="Gestión de Servicios" filled rounded hide-details>
+                            <template v-slot:item="data">
+                                <v-list-item-content>
+                                    <v-list-item-title v-html="data.item.nombre"></v-list-item-title>
+                                    <v-list-item-subtitle v-html="data.item.group"></v-list-item-subtitle>
+                                </v-list-item-content>
+                            </template>
+                        </v-autocomplete>
                     </v-col>
                 </v-row>
 
@@ -55,11 +64,11 @@
 
                 <v-row dense>
                     <v-col cols="6"  v-if="participante.habilitar_usuario">
-                        <v-text-field v-model="participante.password" :rules="[ v => !!v ]" :type="!participante.show_password ? 'password' : 'text'" :append-icon="!participante.show_password ? 'mdi-eye' : 'mdi-eye-off'" autocomplete="off" outlined hide-details label="Contraseña" @click:append="participante.show_password = !participante.show_password"></v-text-field>
+                        <v-text-field v-model="participante.password" :rules="[ v => !!v ]" :type="!participante.show_password ? 'password' : 'text'" :append-icon="!participante.show_password ? 'mdi-eye' : 'mdi-eye-off'" autocomplete="off" filled rounded hide-details label="Contraseña" @click:append="participante.show_password = !participante.show_password"></v-text-field>
                     </v-col>
 
                      <v-col cols="6" v-if="participante.usuario || participante.habilitar_usuario">
-                        <v-select v-model="participante.id_rol" :rules="[ v => !!v ]" :items="roles" item-text="nombre" item-value="id" autocomplete="off" outlined hide-details label="Rol"></v-select>
+                        <v-select v-model="participante.id_rol" :rules="[ v => !!v ]" :items="roles" item-text="nombre" item-value="id" autocomplete="off" filled rounded hide-details label="Rol"></v-select>
                     </v-col>
                     <v-col v-if="participante.id_rol == '2'">
                         <v-checkbox
@@ -92,8 +101,9 @@
 <script>
 
     import request from '@/functions/request.js'
-    // eslint-disable-next-line no-unused-vars
     import alert from '@/functions/alert.js'
+    
+    import { mapActions, mapState } from 'vuex'
 
     export default {
         props: {
@@ -303,8 +313,16 @@
 
                 }
 
-            }
+            },
+            ...mapActions({
+                fetchAreas: 'reunion/fetchAreas'
+            })
 
+        },
+        computed: {
+            ...mapState({
+                areas: state => state.reunion.areas_pendientes
+            })
         },
         watch: {
 
@@ -324,6 +342,8 @@
 
         },
         mounted(){
+
+            this.fetchAreas()
 
             if (this.idItem) {
                 

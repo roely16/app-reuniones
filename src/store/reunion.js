@@ -27,7 +27,8 @@ const state = {
 	],
 	metodos: [],
 	areas: [],
-	participantes_seleccionados: []
+	participantes_seleccionados: [],
+	areas_pendientes: []
 }
 
 const mutations = {
@@ -123,6 +124,9 @@ const mutations = {
 			}
 
 		});
+	},
+	setAreasPendientes: (state, payload) => {
+		state.areas_pendientes = payload
 	}
 }
 
@@ -174,6 +178,27 @@ const actions = {
 			console.log(error)
 
 		}
+	},
+	async fetchAreas({commit}){
+
+		try {
+			
+			const data = {
+				url: 'obtener_areas'
+			}
+
+			const response = await request.post(data)
+
+			commit('setAreasPendientes', response.data.areas)
+
+			console.log(response.data)
+
+		} catch (error) {
+			
+			console.log(error)
+
+		}
+
 	}
 
 }
