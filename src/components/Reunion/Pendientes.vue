@@ -2,7 +2,10 @@
 	<div>
 		<v-row class="container-agenda">
 			<v-col class="mb-0 pb-0" cols="12" v-for="(pendiente, key) in pendientes" :key="key">
-				<v-textarea v-model="pendiente.actividad" no-resize :rows="3" label="Tarea" hide-details filled rounded>
+				<span v-if="pendiente.responsable" class="ml-4 text-caption">
+					Responsable: <strong>{{ pendiente.nombre_completo }}</strong>
+				</span>
+				<v-textarea v-model="pendiente.actividad" label="Tarea" counter maxlength="4000" filled rounded>
 					<template v-slot:append>
 						<v-icon @click="agregar_responsable(pendiente)" color="primary">
 							mdi-account-plus
@@ -12,13 +15,10 @@
 						</v-icon>
 					</template>
 				</v-textarea>
-				<span class="ml-4 text-caption">
-					Responsable: <strong>{{ pendiente.responsable }}</strong>
-				</span>
 			</v-col>
 		</v-row>
 		
-		<v-divider class="mt-10 mb-4"></v-divider>
+		<v-divider class="mt-6 mb-4"></v-divider>
 		<v-row class="text-center">
 			<v-col>
 				<v-btn :disabled="last_empty" @click="agregar_pendiente()" elevation="0" color="primary">
@@ -31,7 +31,7 @@
 
 		<modal title="Responsable" width="600" ref="modal">
 			<template #form ref="form">
-				<responsable @update_pendiente="(value) => update_pendiente(value)"></responsable>
+				<responsable :pendiente="pendiente_actual" @update_pendiente="(value) => update_pendiente(value)"></responsable>
 			</template>
 		</modal>
 	</div>
@@ -74,8 +74,10 @@ export default {
 		},
 		update_pendiente(value){
 
-			console.log(value)
-			this.pendiente_actual.responsable = value
+			this.pendiente_actual.responsable = value.nit
+			this.pendiente_actual.nombre_completo = value.nombre_completo
+
+			this.$refs.modal.close()
 
 		}
 	},

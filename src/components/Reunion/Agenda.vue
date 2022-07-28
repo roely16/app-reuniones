@@ -2,7 +2,7 @@
 	<div>
 		<v-row class="container-agenda">
 			<v-col class="mb-0 pb-0" cols="12" v-for="(punto, key) in puntos_agenda" :key="key">
-				<v-textarea v-model="punto.text" label="Punto de Agenda" hide-details filled rounded>
+				<v-textarea maxlength="4000" counter v-model="punto.text" label="Punto de Agenda" filled rounded>
 					<template v-slot:append>
 						<v-icon @click="quitar_punto(key)" v-if="key > 0" color="error">
 							mdi-delete-outline

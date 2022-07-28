@@ -8,7 +8,7 @@
                             <v-text-field append-icon="mdi-magnify" dense label="Buscar" hide-details rounded filled></v-text-field>
                         </v-col>
                         <v-col align="end">
-                            <v-btn color="secondary" icon>
+                            <v-btn @click="checkAllDisponibles()" color="secondary" icon>
                                 <v-icon>
                                     mdi-checkbox-marked-outline
                                 </v-icon>
@@ -58,7 +58,7 @@
                             <v-text-field append-icon="mdi-magnify" dense label="Buscar" hide-details rounded filled></v-text-field>
                         </v-col>
                         <v-col align="end">
-                            <v-btn color="secondary" icon>
+                            <v-btn @click="checkAllAgregado()" color="secondary" icon>
                                 <v-icon>
                                     mdi-checkbox-marked-outline
                                 </v-icon>
@@ -125,7 +125,9 @@ export default {
             'agregarParticipantes': 'reunion/agregarParticipantes',
             'agregarSeccionParticipante': 'reunion/agregarSeccionParticipante',
             'setParticipante': 'reunion/setParticipante',
-            'removerParticipantes': 'reunion/removerParticipantes'
+            'removerParticipantes': 'reunion/removerParticipantes',
+            'checkAllDisponibles': 'reunion/checkAllDisponibles',
+            'checkAllAgregado': 'reunion/checkAllAgregado'
         })
     },
     computed: {

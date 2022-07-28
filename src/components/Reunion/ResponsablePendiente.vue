@@ -31,7 +31,6 @@
 
             <v-row class="mt-4">
                 <v-col class="text-center">
-                    <v-btn class="mr-2" large elevation="0" color="secondary">Cancelar</v-btn>
                     <v-btn @click="update_pendiente()" :disabled="!selected" large elevation="0" color="primary">Asignar</v-btn>
                 </v-col>
             </v-row>
@@ -41,10 +40,13 @@
 
 <script>
 
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
     
+    props: {
+        pendiente: Object
+    },
     data(){
         return{
             selected: null
@@ -55,8 +57,13 @@ export default {
         ...mapActions({
             detalleColaborador: 'reunion/detalleColaborador'
         }),
+        ...mapMutations({
+            setResponsableDetalle: 'reunion/setResponsableDetalle'
+        }), 
         update_pendiente(){
-            this.$emit('update_pendiente', this.selected)
+
+            // Obtener el objecto completo del colaborador
+            this.$emit('update_pendiente', this.responsable_detalle)
         }
 
     },
@@ -76,6 +83,17 @@ export default {
 
             //Solicitar el detalle del colaborador
             this.detalleColaborador(val)
+
+        },
+        pendiente: function(val){
+
+            this.selected = val.responsable
+
+            if (!val.responseble) {
+                
+                this.setResponsableDetalle({})
+                
+            }
 
         }
     }

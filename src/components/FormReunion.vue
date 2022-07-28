@@ -58,7 +58,7 @@
     import request from '@/functions/request.js'
     import alert from '@/functions/alert.js'
 
-    import { mapState } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
 
     export default {
         components: {
@@ -133,6 +133,9 @@
         },
         methods: {
 
+            ...mapActions({
+                fetchDetail: 'reunion/fetchDetail'
+            }),
             personas_compartir(){
 
                 const usuario = JSON.parse(localStorage.getItem('app-reuniones'))
@@ -291,24 +294,7 @@
             },
             obtener_detalle(){
 
-                const data = {
-                    url: 'detalle_reunion',
-                    data: {
-                        id: this.idItem
-                    }
-                }
-
-                request.post(data)
-                .then((response) => {
-                    console.log(response.data)
-
-                    this.content = response.data.contenido
-                    this.observaciones = response.data.observaciones
-                    this.personas_enviar = response.data.compartir
-
-                    this.recargar_vistaprevia()
-
-                })
+                this.fetchDetail(this.idItem)
 
             },
             clear(){

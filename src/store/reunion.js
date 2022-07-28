@@ -69,7 +69,7 @@ const mutations = {
 	agregarSeccionParticipante: (state, payload) => {
 
 		payload.participantes.forEach(empleado => {
-			empleado.participante_selected = payload.value
+			empleado.participante_selected = payload.value_participante
 		});
 
 	},
@@ -124,6 +124,9 @@ const mutations = {
 
 				area[0].participantes = filter_participantes
 
+				area[0].value = false
+				area[0].value_participante = false
+
 			}
 
 		});
@@ -145,7 +148,37 @@ const mutations = {
 	},
 	setResponsableDetalle: (state, payload) => {
 		state.responsable_detalle = payload
+	},
+	checkAllDisponibles: (state) => {
+
+		state.areas.forEach(area => {
+			
+			area.value = !area.value
+
+			area.empleados.forEach(empleado => {
+
+				empleado.selected = !empleado.selected
+
+			})
+
+		});
+
+	},
+	checkAllAgregado: (state) => {
+
+		state.areas.forEach(area => {
+			
+			area.value_participante = !area.value_participante
+
+			area.participantes.forEach(participante => {
+				
+				participante.participante_selected = area.value_participante
+
+			});
+
+		});
 	}
+
 }
 
 const actions = {
@@ -160,7 +193,7 @@ const actions = {
 			const userData = JSON.parse(localStorage.getItem('app-reuniones'))
 
 			state.encabezado.responsable = userData.nombre
-			state.encabezado.id_responsable = userData.id
+			state.encabezado.id_responsable = userData.id_persona
 			state.encabezado.seccion = userData.area
 			state.encabezado.codarea = userData.codarea
 			state.encabezado.nit = userData.nit
@@ -180,7 +213,7 @@ const actions = {
 		}
 
 	},
-	async fetchParticipantes({commit}){
+	async fetchParticipantes({state, commit}){
 
 		try {
 			
@@ -190,7 +223,11 @@ const actions = {
 
 			const response = await request.post(data)
 
-			commit('setAreas', response.data.areas)
+			if (state.areas.length == 0) {
+	
+				commit('setAreas', response.data.areas)
+
+			}
 
 			console.log(response.data)
 
@@ -200,7 +237,7 @@ const actions = {
 
 		}
 	},
-	async fetchAreas({commit}){
+	async fetchAreas({ commit }){
 
 		try {
 			
@@ -280,6 +317,34 @@ const actions = {
 
 		}
 
+	},
+	async fetchDetail({ state }, payload){
+		
+		try {
+			
+			const data = {
+				url: 'detalle_reunion',
+				data: {
+					id: payload
+				}
+			}
+
+			const response = await request.post(data)
+
+			state.encabezado = response.data.encabezado
+
+			state.puntos_agenda = response.data.puntos_agenda.length > 0 ? response.data.puntos_agenda : [{text: null}]
+
+			state.pendientes = response.data.pendientes.length > 0 ? response.data.pendientes : [{actividad: null, responsable: null}]
+
+			console.log(response.data)
+
+		} catch (error) {
+			
+			console.log(error)
+
+		}
+
 	}
 
 }
@@ -292,7 +357,7 @@ const getters = {
 
 		state.areas.forEach(area => {
 			
-			const empleados_seleccionados = area.empleados.filter(empleado => empleado.selected)
+			const empleados_seleccionados = area.empleados.filter(empleado => empleado.selected == true)
 
 			empleados_seleccionados.forEach(empleado => {
 				
@@ -310,7 +375,7 @@ const getters = {
 
 		state.areas.forEach(area => {
 			
-			const empleados_seleccionados = area.participantes.filter(empleado => empleado.participante_selected)
+			const empleados_seleccionados = area.participantes.filter(empleado => empleado.participante_selected  == true)
 
 			empleados_seleccionados.forEach(empleado => {
 				
