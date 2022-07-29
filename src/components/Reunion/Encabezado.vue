@@ -161,7 +161,7 @@ export default {
 
 		this.datos_formulario()
 
-		this.fetchPreview()
+		// this.fetchPreview()
 	}
 }
 </script>

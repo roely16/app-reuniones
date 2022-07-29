@@ -183,9 +183,6 @@ const mutations = {
 
 const actions = {
 
-	async agregarResponsable(){
-		
-	},
 	async fetchDataForm({commit, state}){
 
 		try {
@@ -309,8 +306,6 @@ const actions = {
 
 			commit('setResponsableDetalle', response.data.colaborador)
 
-			console.log(response.data)
-
 		} catch (error) {
 			
 			console.log(error)
@@ -318,7 +313,7 @@ const actions = {
 		}
 
 	},
-	async fetchDetail({ state }, payload){
+	async fetchDetail({ state, dispatch }, payload){
 		
 		try {
 			
@@ -336,6 +331,9 @@ const actions = {
 			state.puntos_agenda = response.data.puntos_agenda.length > 0 ? response.data.puntos_agenda : [{text: null}]
 
 			state.pendientes = response.data.pendientes.length > 0 ? response.data.pendientes : [{actividad: null, responsable: null}]
+
+			// Obtener la vista previa 
+			dispatch('vistaprevia/fetchPreview', null, {root: true})
 
 			console.log(response.data)
 

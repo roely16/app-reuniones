@@ -193,7 +193,7 @@
                 fetchReuniones: 'lista_minutas/fetchReuniones',
                 checkParticipacion: 'lista_minutas/checkParticipacion',
                 fetchEliminar: 'lista_minutas/fetchEliminar',
-                saveReunion: 'reunion/saveReunion'
+                saveReunion: 'reunion/saveReunion',
             }) 
         },
         computed: {

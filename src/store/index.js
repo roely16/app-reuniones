@@ -7,6 +7,7 @@ import reunion from './reunion'
 import lista_minutas from './lista_minutas'
 import dialog from './dialog'
 import vistaprevia from './vistaprevia'
+import compartir from './compartir'
 
 export default new Vuex.Store({
 	state: {
@@ -19,6 +20,7 @@ export default new Vuex.Store({
 		reunion: reunion,
 		lista_minutas: lista_minutas,
 		dialog: dialog,
-		vistaprevia: vistaprevia
+		vistaprevia: vistaprevia,
+		compartir: compartir
 	}
 })
