@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-container fluid>
-            <v-row class="mt-2">
+            <v-row v-if="!loading" class="mt-2">
                 <v-col cols="7" class="pr-0 mr-0">
                     <v-row class="mb-4">
                         <v-col cols="12" class="pt-0">
@@ -27,13 +27,13 @@
                             <vista-previa></vista-previa>
                         </v-col>
                     </v-row>
-                    <v-row v-if="encabezado.updated_at">
+                    <!-- <v-row v-if="encabezado.updated_at">
                         <v-col cols="12">
                             <span class="font-italic">
                                 Última Actualización: {{ encabezado.updated_at }}
                             </span>
                         </v-col>
-                    </v-row>
+                    </v-row> -->
                 </v-col>
             </v-row>
 
@@ -331,7 +331,8 @@
         computed: {
 
             ...mapState({
-                encabezado: state => state.reunion.encabezado
+                encabezado: state => state.reunion.encabezado,
+                loading: state => state.reunion.loading
             }),
             currentTab: function(){
 

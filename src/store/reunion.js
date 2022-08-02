@@ -3,36 +3,39 @@ import request from '@/functions/request'
 const namespaced = true
 
 const state = {
-	encabezado: {
-		id: null,
-		fecha: null,
-		seccion: null,
-		metodo: null,
-		participantes: [],
-		responsable: null,
-		id_responsable: null,
-		hora_inicio: null,
-		hora_fin: null,
-		comentarios: null
-	},
-	puntos_agenda: [
-		{
-			text: null
-		}
-	],
-	pendientes: [
-		{
-			actividad: null,
-			responsable: null
-		}
-	],
-	metodos: [],
-	areas: [],
-	participantes_seleccionados: [],
-	areas_pendientes: [],
-	saving: false,
-	responsable_detalle: {}
-}
+	
+		encabezado: {
+			id: null,
+			fecha: null,
+			seccion: null,
+			metodo: null,
+			participantes: [],
+			responsable: null,
+			id_responsable: null,
+			hora_inicio: null,
+			hora_fin: null,
+			comentarios: null
+		},
+		puntos_agenda: [
+			{
+				text: null
+			}
+		],
+		pendientes: [
+			{
+				actividad: null,
+				responsable: null
+			}
+		],
+		metodos: [],
+		areas: [],
+		participantes_seleccionados: [],
+		areas_pendientes: [],
+		saving: false,
+		responsable_detalle: {},
+		loading: false
+	
+  }
 
 const mutations = {
 	agregar_punto: (state) => {
@@ -76,31 +79,18 @@ const mutations = {
 	agregarParticipantes: (state, payload) => {
 
 		payload.forEach(participante => {
-			
-			// Validar si existe el area
-			const area = state.encabezado.participantes.filter(area => area.codarea == participante.codarea)
+		
+			participante.selected = false
+			participante.participante_selected = false
 
 			const area_existente = state.areas.filter(area => area.codarea == participante.codarea)
 
-			if (area.length == 0) {
-
-				participante.selected = false
-				participante.participante_selected = false
-
-				// No existe el area por lo que se deberá de agregar
-				area_existente[0].participantes.push(participante)
-
-				state.encabezado.participantes.push(area_existente[0])
-
-				
-			}else{
-				area_existente[0].participantes.push(participante)
-			}
+			area_existente[0].participantes.push(participante)
 
 			let remover_participante = area_existente[0].empleados.filter(empleado => empleado.nit != participante.nit)
 
 			area_existente[0].empleados = remover_participante
-
+			
 		});
 
 	},
@@ -177,6 +167,9 @@ const mutations = {
 			});
 
 		});
+	},
+	setLoading: (state, payload) => {
+		state.loading = payload
 	}
 
 }
@@ -313,10 +306,14 @@ const actions = {
 		}
 
 	},
-	async fetchDetail({ state, dispatch }, payload){
+	async fetchDetail({ state, dispatch, commit }, payload){
 		
 		try {
 			
+			// Mostrar estado de cargando
+
+			commit('setLoading', true)
+
 			const data = {
 				url: 'detalle_reunion',
 				data: {
@@ -332,10 +329,11 @@ const actions = {
 
 			state.pendientes = response.data.pendientes.length > 0 ? response.data.pendientes : [{actividad: null, responsable: null}]
 
+			state.areas = response.data.areas
+
 			// Obtener la vista previa 
 			dispatch('vistaprevia/fetchPreview', null, {root: true})
-
-			console.log(response.data)
+			commit('setLoading', false)
 
 		} catch (error) {
 			

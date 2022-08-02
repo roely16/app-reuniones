@@ -150,6 +150,8 @@
         methods: {
             mostrar_modal(){
 
+                // Limpiar la información para que sea una plantilla nueva
+
                 this.title = "Registrar Bitácora de Reunión"
                 this.idItem = null
                 this.fullscreen = true

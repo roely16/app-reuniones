@@ -147,8 +147,6 @@ export default {
 
             });
 
-            console.log(available)
-
             return available
         },
         agregados: function(){

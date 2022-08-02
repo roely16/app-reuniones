@@ -21,6 +21,8 @@ const actions = {
 
 		try {
 			
+            console.log(rootState.reunion.areas)
+
             const participantes = []
 
             rootState.reunion.areas.forEach(area => {
