@@ -170,6 +170,49 @@ const mutations = {
 	},
 	setLoading: (state, payload) => {
 		state.loading = payload
+	},
+	clearForm: (state) => {
+
+		state.encabezado = {
+			id: null,
+			fecha: null,
+			seccion: null,
+			metodo: null,
+			participantes: [],
+			responsable: null,
+			id_responsable: null,
+			hora_inicio: null,
+			hora_fin: null,
+			comentarios: null
+		}
+
+		state.puntos_agenda = [
+			{
+				text: null
+			}
+		]
+
+		state.pendientes = [
+			{
+				actividad: null,
+				responsable: null
+			}
+		]
+
+		state.metodos = []
+
+		state.areas = []
+
+		state.participantes_seleccionados = []
+		
+		state.areas_pendientes = []
+		
+		state.saving = false
+
+		state.responsable_detalle = {}
+		
+		state.loading = false
+
 	}
 
 }

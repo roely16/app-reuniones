@@ -120,15 +120,11 @@
 
 <script>
 
-    /* eslint-disable no-unused-vars */
-    import request from '@/functions/request'
-    import alert from '@/functions/alert'
-
     import Modal from '@/components/Modal'
     import FormReunion from '@/components/FormReunion'
     import FormHistorial from '@/components/FormHistorial'
 
-    import { mapState, mapActions } from 'vuex'
+    import { mapState, mapActions, mapMutations } from 'vuex'
 
     export default {
         components: {
@@ -151,6 +147,9 @@
             mostrar_modal(){
 
                 // Limpiar la información para que sea una plantilla nueva
+                this.clearForm()
+                this.fetchDataForm()
+                .then(this.fetchPreview())
 
                 this.title = "Registrar Bitácora de Reunión"
                 this.idItem = null
@@ -196,6 +195,11 @@
                 checkParticipacion: 'lista_minutas/checkParticipacion',
                 fetchEliminar: 'lista_minutas/fetchEliminar',
                 saveReunion: 'reunion/saveReunion',
+                fetchPreview: 'vistaprevia/fetchPreview',
+                fetchDataForm: 'reunion/fetchDataForm'
+            }),
+            ...mapMutations({
+                clearForm: 'reunion/clearForm'
             }) 
         },
         computed: {

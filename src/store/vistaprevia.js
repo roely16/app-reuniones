@@ -21,8 +21,6 @@ const actions = {
 
 		try {
 			
-            console.log(rootState.reunion.areas)
-
             const participantes = []
 
             rootState.reunion.areas.forEach(area => {
@@ -51,8 +49,6 @@ const actions = {
 
 			commit('setPDF', process.env.VUE_APP_API_URL + response.data.pdf_url)
             commit('setLoading', false)
-
-			console.log(response.data)
 
 		} catch (error) {
 			
