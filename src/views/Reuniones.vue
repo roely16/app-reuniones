@@ -36,11 +36,11 @@
                             <v-data-table :loading="loading" :items="reuniones.items" :headers="reuniones.headers">
                                  <template v-slot:[`item.action`]="data">
 
-                                    <v-btn icon color="success" @click="mostrar_historial(data.item)">
+                                    <!-- <v-btn icon color="success" @click="mostrar_historial(data.item)">
                                         <v-icon>
                                             mdi-history
                                         </v-icon>
-                                    </v-btn>
+                                    </v-btn> -->
 
                                     <v-btn icon color="primary" @click="mostrar_editar(data.item)">
                                         <v-icon>
