@@ -1,5 +1,7 @@
 import request from '@/functions/request'
 
+import Swal from 'sweetalert2'
+
 const namespaced = true
 
 const state = {
@@ -68,9 +70,12 @@ const actions = {
             // Obtener los correos de las personas que recibirán la agenda
             const destinos = []
 
-            payload.forEach(index => {
+            payload.forEach(id => {
                 
-                destinos.push(state.destinos[index])
+                // Obtener la persona
+                let persona = state.destinos.filter(destino => destino.id == id)
+
+                destinos.push(persona[0])
 
             });
 
@@ -90,6 +95,12 @@ const actions = {
 
             commit('setSending', false)
             dispatch('fetchShare')
+
+            Swal.fire(
+                'Excelente!',
+                'La minuta de reunión ha sido compartida exitosamente.',
+                'success'
+            )
 
             console.log(response.data)
 
