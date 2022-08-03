@@ -56,7 +56,34 @@ const actions = {
 
 		}
 
-	}
+	},
+    async fetchEarlierVersion({ commit, rootState }){
+
+        try {
+            
+            commit('setLoading', true)
+
+            const data = {
+                url: 'generar_vistaprevia',
+                data: {
+                    id: rootState.reunion.encabezado.id,
+                    content: rootState.reunion.encabezado.contenido
+                }
+            }
+
+            const response = await request.post(data)
+
+            commit('setLoading', false)
+
+            console.log(response.data)
+
+        } catch (error) {
+         
+            console.log(error)
+
+        }
+
+    }
 }
 
 export default {

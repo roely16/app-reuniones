@@ -1,12 +1,15 @@
 <template>
     <div class="preview-container">
-        <v-row dense>
+        <v-row align="center" dense>
             <v-col>
                 <span class="text-button text-uppercase font-weight-medium">
                     Vista Previa
                 </span>
             </v-col>
             <v-col align="end">
+                <v-chip class="mr-2" v-if="encabezado.contenido" @click="mostrarAnterior()" :outlined="!anterior" color="error" label>
+                    Versión Anterior
+                </v-chip>
                 <v-btn @click="compartir()" icon>
                     <v-icon>
                         mdi-export-variant
@@ -50,6 +53,11 @@ import FetchPreview from '@/components/Reunion/FetchPreview'
 import { mapActions, mapState } from 'vuex'
 
 export default {
+    data(){
+        return{
+            anterior: false
+        }
+    },
     components: {
         'modal': Modal,
         'compartir': Compartir,
@@ -58,7 +66,8 @@ export default {
     methods: {
         ...mapActions({
             fetchPreview: 'vistaprevia/fetchPreview',
-            fetchShare: 'compartir/fetchShare'
+            fetchShare: 'compartir/fetchShare',
+            fetchEarlierVersion: 'vistaprevia/fetchEarlierVersion'
         }),
         compartir(){
             
@@ -66,12 +75,27 @@ export default {
 
             this.$refs.modal.show()
 
+        },
+        mostrarAnterior(){
+
+            this.anterior = !this.anterior
+
+            if (this.anterior) {
+                
+                this.fetchEarlierVersion()
+
+                return
+            }
+            
+            this.fetchPreview()
+
         }
     },
     computed: {
         ...mapState({
             pdf_url: state => state.vistaprevia.pdf_url,
-            loading: state => state.vistaprevia.loading
+            loading: state => state.vistaprevia.loading,
+            encabezado: state => state.reunion.encabezado
         })
     }
 }
