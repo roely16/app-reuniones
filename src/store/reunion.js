@@ -33,7 +33,8 @@ const state = {
 		areas_pendientes: [],
 		saving: false,
 		responsable_detalle: {},
-		loading: false
+		loading: false,
+		search1: null
 	
   }
 
@@ -213,6 +214,9 @@ const mutations = {
 		
 		state.loading = false
 
+	},
+	setSearch1: (state, payload) => {
+		state.search1 = payload
 	}
 
 }
@@ -441,6 +445,34 @@ const getters = {
 		});
 
 		return selected;
+
+	},
+	disponiblesFiltered(state){
+
+		if (!state.search1) {
+			return state.areas
+		}
+
+		state.areas.forEach(area => {
+
+			// El filtro en cada iteración de realizar sobre el total
+			const empleados_bk = area.empleados_bk
+
+			// var uniqueResultOne = empleados_bk.filter(function(obj) {
+			// 	return !area.empleados.some(function(obj2) {
+			// 		return obj.nombre == obj2.nombre;
+			// 	});
+			// });
+
+			// console.log(uniqueResultOne)
+
+			const filtered = empleados_bk.filter(empleado => empleado.nombre.toLowerCase().indexOf(state.search1.toLowerCase()) > -1)
+
+			area.empleados = filtered
+
+		})
+
+		return state.areas
 
 	}
 }

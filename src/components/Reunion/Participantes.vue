@@ -5,7 +5,10 @@
                 <v-col cols="6">
                     <v-row justify="center" align="center">
                         <v-col cols="8">
-                            <v-text-field append-icon="mdi-magnify" dense label="Buscar" hide-details rounded filled></v-text-field>
+                            <!-- <v-text-field v-model="search1" append-icon="mdi-magnify" dense label="Buscar" hide-details rounded filled></v-text-field> -->
+                            <span class="text-button">
+                                Disponibles
+                            </span>
                         </v-col>
                         <v-col align="end">
                             <v-btn @click="checkAllDisponibles()" color="secondary" icon>
@@ -22,8 +25,9 @@
                             </v-badge>
                         </v-col>
                     </v-row>
+
                     <v-row class="area-container">
-                        <v-col class="pb-0 pt-0" v-for="(area, key) in areas" :key="key" cols="12">
+                        <v-col class="pb-0 pt-0" v-for="(area, key) in disponiblesFiltered" :key="key" cols="12">
                             <v-card elevation="0" v-if="area.empleados.length > 0">
                                 <v-card-text class="pb-0">
                                     <v-list-item class="pl-1 pr-0">
@@ -55,7 +59,10 @@
                 <v-col>
                     <v-row justify="center" align="center">
                         <v-col cols="8">
-                            <v-text-field append-icon="mdi-magnify" dense label="Buscar" hide-details rounded filled></v-text-field>
+                            <!-- <v-text-field v-model="search2" append-icon="mdi-magnify" dense label="Buscar" hide-details rounded filled></v-text-field> -->
+                            <span class="text-button">
+                                Seleccionados
+                            </span>
                         </v-col>
                         <v-col align="end">
                             <v-btn @click="checkAllAgregado()" color="secondary" icon>
@@ -119,6 +126,11 @@
 import { mapState, mapMutations, mapGetters } from 'vuex'
 
 export default {
+    data(){
+        return{
+            search2: null
+        }
+    },
     methods: {
         ...mapMutations({
             'agregarSeccion': 'reunion/agregarSeccion',
@@ -127,7 +139,8 @@ export default {
             'setParticipante': 'reunion/setParticipante',
             'removerParticipantes': 'reunion/removerParticipantes',
             'checkAllDisponibles': 'reunion/checkAllDisponibles',
-            'checkAllAgregado': 'reunion/checkAllAgregado'
+            'checkAllAgregado': 'reunion/checkAllAgregado',
+            'setSearch1': 'reunion/setSearch1'
         })
     },
     computed: {
@@ -137,7 +150,8 @@ export default {
         }),
         ...mapGetters({
             disponibles_seleccionados: 'reunion/disponibles_seleccionados',
-            participantes_seleccionados: 'reunion/participantes_seleccionados'
+            participantes_seleccionados: 'reunion/participantes_seleccionados',
+            disponiblesFiltered: 'reunion/disponiblesFiltered'
         }),
         disponibles: function(){
 
@@ -151,6 +165,23 @@ export default {
         },
         agregados: function(){
             return []
+        },
+        search1: {
+            get(){
+
+                return this.$store.state.reunion.search1
+
+            },
+            set(val){
+
+                this.setSearch1(val)
+
+            }
+        },
+        agregadosFiltered: function(){
+
+            return []
+
         }
     }
 }
