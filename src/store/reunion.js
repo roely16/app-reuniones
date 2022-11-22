@@ -45,8 +45,8 @@ const mutations = {
 	quitar_punto: (state, payload) => {
 		state.puntos_agenda.splice(payload, 1)
 	},
-	agregar_pendiente: (state) => {
-		state.pendientes.push({actividad: null, responsable: null})
+	agregar_pendiente: async (state) => {
+		await state.pendientes.push({actividad: null, responsable: null})
 	},
 	quitar_pendiente: (state, payload) => {
 		state.pendientes.splice(payload, 1)

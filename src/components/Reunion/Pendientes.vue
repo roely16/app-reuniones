@@ -1,11 +1,11 @@
 <template>
 	<div>
-		<v-row class="container-agenda">
+		<v-row id="container" ref="container" class="container-pendientes">
 			<v-col class="mb-0 pb-0" cols="12" v-for="(pendiente, key) in pendientes" :key="key">
 				<span v-if="pendiente.responsable" class="ml-4 text-caption">
 					Responsable: <strong>{{ pendiente.nombre_completo }}</strong>
 				</span>
-				<v-textarea v-model="pendiente.actividad" label="Tarea" counter maxlength="4000" filled rounded>
+				<v-textarea no-resize v-model="pendiente.actividad" label="Tarea" counter maxlength="4000" filled rounded>
 					<template v-slot:append>
 						<v-icon @click="agregar_responsable(pendiente)" color="primary">
 							mdi-account-plus
@@ -21,7 +21,8 @@
 		<v-divider class="mt-6 mb-4"></v-divider>
 		<v-row class="text-center">
 			<v-col>
-				<v-btn :disabled="last_empty" @click="agregar_pendiente()" elevation="0" color="primary">
+				<v-btn :disabled="last_empty" @click="add_field()" elevation="0" color="primary">
+					AGREGAR
 					<v-icon>
 						mdi-plus
 					</v-icon>
@@ -36,6 +37,13 @@
 		</modal>
 	</div>
 </template>
+
+<style scoped>
+	.container-pendientes{
+		max-height: 60vh;
+		overflow-y: scroll;
+	}
+</style>
 
 <script>
 
@@ -63,6 +71,15 @@ export default {
 			agregarResponsable: 'reunion/agregarResponsable',
 			fetchAreas: 'reunion/fetchAreas'
 		}),
+		async add_field(){
+			this.agregar_pendiente()
+			
+			await new Promise(r => setTimeout(r, 100));
+
+			var container = this.$el.querySelector("#container");
+			container.scrollTop = container.scrollHeight + 250;
+
+		},
 		agregar_responsable(pendiente){
 
 			this.fetchAreas()

@@ -20,7 +20,6 @@
                 <v-col cols="7">
                     <v-text-field v-model="responsable_detalle.nombre_completo" dense readonly filled rounded hide-details label="Nombre"></v-text-field>
                     <v-text-field v-model="responsable_detalle.area" dense readonly class="mt-2" filled rounded hide-details label="Coordinación o Sección"></v-text-field>
-                    <v-text-field dense readonly class="mt-2" filled rounded hide-details label="Puesto"></v-text-field>
                 </v-col>
                 <v-col class="text-center" cols="5">
                     <v-avatar v-if="responsable_detalle.archivo" rounded size="150">

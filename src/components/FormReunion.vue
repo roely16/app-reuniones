@@ -1,43 +1,36 @@
 <template>
     <div>
-        <v-container fluid>
-            <v-row v-if="!loading" class="mt-2">
-                <v-col cols="7" class="pr-0 mr-0">
-                    <v-row class="mb-4">
-                        <v-col cols="12" class="pt-0">
-                            <v-tabs v-model="tab">
-                                <v-tab v-for="(tab, i) in tabs" :key="i">
-                                    {{ tab.text }}
-                                </v-tab>
-                            </v-tabs>
-                        </v-col>
-                        <v-col cols="12">
-                            <v-card elevation="0">
-                                <v-card-text class="mt-0 pt-0">
-                                    <component v-bind:is="currentTab"></component>
-                                </v-card-text>
-                            </v-card>
-                        </v-col>
-                    </v-row>                   
-                </v-col>
-                <v-divider class="ml-4 mr-4" vertical></v-divider>
-                <v-col>
-                    <v-row>
-                        <v-col cols="12">
-                            <vista-previa></vista-previa>
-                        </v-col>
-                    </v-row>
-                    <!-- <v-row v-if="encabezado.updated_at">
-                        <v-col cols="12">
-                            <span class="font-italic">
-                                Última Actualización: {{ encabezado.updated_at }}
-                            </span>
-                        </v-col>
-                    </v-row> -->
-                </v-col>
-            </v-row>
+        <v-row v-if="!loading" class="mt-2">
+            <v-col cols="7" class="pr-0 mr-0">
+                <v-row class="mb-4">
+                    <v-col cols="12" class="pt-0">
+                        <v-tabs v-model="tab">
+                            <v-tab v-for="(tab, i) in tabs" :key="i">
+                                {{ tab.text }}
+                            </v-tab>
+                        </v-tabs>
+                    </v-col>
+                </v-row> 
+                <v-row no-gutters>
+                    <v-col cols="12">
+                        <v-card elevation="0">
+                            <v-card-text class="mt-0 pt-0">
+                                <component v-bind:is="currentTab"></component>
+                            </v-card-text>
+                        </v-card>
+                    </v-col>
+                </v-row>                  
+            </v-col>
+            <v-divider class="ml-4 mr-4" vertical></v-divider>
+            <v-col>
+                <v-row>
+                    <v-col cols="12">
+                        <vista-previa></vista-previa>
+                    </v-col>
+                </v-row>
+            </v-col>
+        </v-row>
 
-        </v-container>
     </div>
 </template>
 

@@ -12,7 +12,8 @@
                     <v-toolbar
                     dark
                     color="primary"
-                    >
+                    flat
+                >
                         <v-btn
                             icon
                             dark

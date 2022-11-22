@@ -23,14 +23,14 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col style="min-heigth: 600px" class="text-center">
+            <v-col style="min-heigth: 70vh" class="text-center">
                 <v-progress-linear :indeterminate="loading" :color="loading ? 'primary' : 'white'"></v-progress-linear>
-                <embed v-if="!loading" width="100%" :src="pdf_url" height="600px">
+                <embed style="height: 70vh" v-if="!loading" width="100%" :src="pdf_url" :height="'70vh'">
                 <fetch-preview v-if="!pdf_url"></fetch-preview>
             </v-col>
         </v-row>
 
-        <modal title="Compartir" width="800" ref="modal">
+        <modal title="Compartir" width="1000" ref="modal">
             <template #form>
                 <compartir></compartir>
             </template>

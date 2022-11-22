@@ -1,26 +1,24 @@
 <template>
-    <div>
         <v-container fluid>
             <v-row class="pt-3">
                 <!-- Sección para compartir -->
-                <v-col cols="6" class="pt-0 text-center">
+                <v-col cols="5" class="pt-0 text-center">
                     <span class="text-button">
                         Destinatarios
                     </span>
                     <v-row>
                         <v-col>
-                            <v-text-field v-model="search" label="Buscar..." filled rounded dense append-icon="mdi-magnify" hide-details></v-text-field>
+                            <v-text-field hide-details v-model="search" label="Buscar..." filled rounded dense append-icon="mdi-magnify"></v-text-field>
                         </v-col>
                     </v-row>
 
                     <!-- Lista de destinatarios -->
                     <v-list class="text-left mt-4 destinos" two-line>
                         <v-list-item-group
-                            v-model="selected"
                             active-class="success--text"
                             multiple
                         >
-                            <v-list-item :value="destino.id" :input-value="destino.id" v-for="(destino, key) in filtered" :key="key">
+                            <v-list-item @click="selectItem(destino)" :value="destino.id" v-for="(destino, key) in filtered" :key="key">
                                 <template v-slot:default="{ active }">
                                     <v-list-item-avatar>
                                         <v-img :src="destino.avatar ? api + destino.avatar : 'avatar/user.png'"></v-img>
@@ -42,12 +40,11 @@
 
                 <v-divider vertical></v-divider>
                 <!-- Sección para mostrar el historial -->
-                <v-col cols="6" class="pt-0 text-center">
+                <v-col cols="7" class="pt-0 text-center">
                     <span class="text-button">
                         Historial
                     </span>
 
-                    <div class="historial">
                     <div class="text-left" v-for="(envio, key) in historial" :key="key">
                         <v-row>
                             <v-col cols="12">
@@ -85,7 +82,6 @@
                         </v-row>
                         <v-divider></v-divider>
                     </div>
-                    </div>
                 </v-col>
             </v-row>
             <v-row>
@@ -101,16 +97,14 @@
                 </v-col>
             </v-row>
         </v-container>
-    </div>
 </template>
 
 <style scoped>
     .destinos{
-        max-height: 500px;
+        max-height: 400px;
         overflow-y: scroll;
     }
     .historial{
-        max-height: 580px;
         overflow-y: scroll;
     }
 </style>
@@ -136,6 +130,23 @@ export default {
             .then(() => {
                 this.selected = []
             })
+        },
+        selectItem(value){
+
+            if (!this.selected.includes(value.id)) {
+                
+                // * Add element to array
+                this.selected.push(value.id)
+
+                return
+
+            }
+
+            // * Remove from array 
+            const result = this.selected.filter(item => item != value.id)
+
+            this.selected = result
+
         }
     },
     computed: {
@@ -152,9 +163,9 @@ export default {
 
             }
 
-            const filter = this.destinos.filter(destino => destino.nombre_completo.toLowerCase().indexOf(this.search.toLowerCase()) > -1)
-
-            return filter
+            return this.destinos.filter(destino => {
+                return destino.nombre_completo.toLowerCase().includes(this.search.toLowerCase());
+            });
 
         }
     }
